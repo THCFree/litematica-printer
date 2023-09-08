@@ -34,6 +34,15 @@ found at the bottom of the page. You can also rebind the printing toggle under "
 default will also
 print regardless if the printer is toggled on or off.
 
+## Grim bypass
+Action for block placement:
+1. me.aleksilassila.litematica.printer.v1_20.Printer.onGameTick
+   - Check if printer is on
+   - Create an initial list of blocks within reach from the schematic world
+   - Loop through every block in that list
+     - Get a list of interaction Guids for that block and loop from them
+       - Get a list of actions from the guide me.aleksilassila.litematica.printer.v1_20.guides.Guide.execute
+
 ## Issues
 
 If you have issues with the printer, **do not** bother the original creator of

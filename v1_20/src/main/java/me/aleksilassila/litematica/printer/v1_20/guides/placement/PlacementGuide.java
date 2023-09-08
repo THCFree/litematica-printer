@@ -1,6 +1,8 @@
 package me.aleksilassila.litematica.printer.v1_20.guides.placement;
 
 import me.aleksilassila.litematica.printer.v1_20.LitematicaMixinMod;
+import me.aleksilassila.litematica.printer.v1_20.actions.PostAction;
+import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import me.aleksilassila.litematica.printer.v1_20.SchematicBlockState;
 import me.aleksilassila.litematica.printer.v1_20.actions.Action;
@@ -95,9 +97,11 @@ abstract public class PlacementGuide extends Guide {
         PrinterPlacementContext ctx = getPlacementContext(player);
 
         if (ctx == null) return actions;
+        System.out.println("Adding prepare action from ctx:" + ctx + this.getClass());
         actions.add(new PrepareAction(ctx));
         actions.add(new InteractActionImpl(ctx));
         if (ctx.shouldSneak) actions.add(new ReleaseShiftAction());
+        if (PrinterConfig.SNAP_BASK.getBooleanValue()) actions.add(new PostAction(ctx, player));
 
         return actions;
     }

@@ -25,19 +25,25 @@ public class ActionHandler {
 
     public void onGameTick() {
         int tickRate = LitematicaMixinMod.PRINTING_INTERVAL.getIntegerValue();
-
-        tick = tick % tickRate == tickRate - 1 ? 0 : tick + 1;
         if (tick % tickRate != 0) {
+            tick++;
             return;
         }
 
         Action nextAction = actionQueue.poll();
+
         if (nextAction != null) {
             if (LitematicaMixinMod.DEBUG) System.out.println("Sending action " + nextAction);
+            System.out.println("Sending action " + nextAction);
             nextAction.send(client, player);
+            if (!nextAction.isSync) {
+                tick++;
+            }
         } else {
             lookAction = null;
+            tick++;
         }
+        tick %= tickRate;
     }
 
     public boolean acceptsActions() {

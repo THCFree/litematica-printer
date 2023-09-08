@@ -1,6 +1,7 @@
 package me.aleksilassila.litematica.printer.v1_20.guides.placement;
 
 import me.aleksilassila.litematica.printer.v1_20.LitematicaMixinMod;
+import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import me.aleksilassila.litematica.printer.v1_20.SchematicBlockState;
 import net.minecraft.block.BlockState;
@@ -66,6 +67,9 @@ public class GuesserGuide extends GeneralPlacementGuide {
                         neighborState.isReplaceable())
                     continue;
 
+                if (!canSeeBlockFace(player, new BlockHitResult(Vec3d.ofCenter(state.blockPos), side, neighborPos, false)))
+                    continue;
+
                 Vec3d hitVec = Vec3d.ofCenter(state.blockPos)
                         .add(Vec3d.of(side.getVector()).multiply(0.5));
 
@@ -75,6 +79,7 @@ public class GuesserGuide extends GeneralPlacementGuide {
 
                     BlockHitResult hitResult = new BlockHitResult(hitVec.add(hitVecToTry.multiply(multiplier)), side.getOpposite(), neighborPos, false);
                     PrinterPlacementContext context = new PrinterPlacementContext(player, hitResult, requiredItem, slot, lookDirection, requiresShift);
+                    context.canStealth = true;
                     BlockState result = getRequiredItemAsBlock(player)
                             .orElse(targetState.getBlock())
                             .getPlacementState(context); // FIXME torch shift clicks another torch and getPlacementState is the clicked block, which is true
@@ -95,6 +100,15 @@ public class GuesserGuide extends GeneralPlacementGuide {
         if (targetState.getBlock() instanceof SlabBlock) return false; // Slabs are a special case
 
         return super.canExecute(player);
+    }
+
+    private boolean canSeeBlockFace(ClientPlayerEntity player, BlockHitResult hitResult) {
+        // Draw a line between the player pos and the block pos and check if the block side is visible
+        // BlockPos targetPos = state.blockPos;
+
+        Vec3d vec = hitResult.getPos().subtract(player.getEyePos());
+        Vec3d hitVector = new Vec3d(hitResult.getSide().getVector().getX(), hitResult.getSide().getVector().getY(), hitResult.getSide().getVector().getZ());
+        return !(vec.dotProduct(hitVector) < 0); // If the dot product is negative, the block side is not visible
     }
 
     private boolean correctChestPlacement(BlockState targetState, BlockState result) {

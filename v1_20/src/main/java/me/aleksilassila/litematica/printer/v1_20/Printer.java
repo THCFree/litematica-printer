@@ -5,8 +5,12 @@ import fi.dy.masa.litematica.util.RayTraceUtils;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
 import me.aleksilassila.litematica.printer.v1_20.actions.Action;
+import me.aleksilassila.litematica.printer.v1_20.actions.PrepareAction;
+import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.guides.Guide;
 import me.aleksilassila.litematica.printer.v1_20.guides.Guides;
+import me.aleksilassila.litematica.printer.v1_20.guides.placement.GeneralPlacementGuide;
+import me.aleksilassila.litematica.printer.v1_20.implementation.actions.InteractActionImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerAbilities;
@@ -47,6 +51,8 @@ public class Printer {
         if (!abilities.allowModifyWorld)
             return false;
 
+        if (PrinterConfig.STOP_ON_MOVEMENT.getBooleanValue() && player.getVelocity().length() > 0.1) return false; // Stop if the player is moving
+
         List<BlockPos> positions = getReachablePositions();
         findBlock:
         for (BlockPos position : positions) {
@@ -60,8 +66,17 @@ public class Printer {
 
             for (Guide guide : guides) {
                 if (guide.canExecute(player)) {
-                    System.out.println("Executing " + guide + " for " + state);
+                    System.out.println("Executing Guide:" + guide);
                     List<Action> actions = guide.execute(player);
+                    // System.out.println("Actions: " + actions);
+                    for (Action a : actions) {
+                        if (a instanceof PrepareAction) {
+                            // System.out.println("Preparing Action " + a);
+                        }
+                        if (a instanceof InteractActionImpl) {
+                            // System.out.println("Interacting Action " + a);
+                        }
+                    }
                     actionHandler.addActions(actions.toArray(Action[]::new));
                     return true;
                 }

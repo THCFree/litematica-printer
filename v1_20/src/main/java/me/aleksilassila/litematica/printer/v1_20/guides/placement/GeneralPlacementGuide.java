@@ -106,6 +106,7 @@ public class GeneralPlacementGuide extends PlacementGuide {
             if (validSide.isEmpty() || hitVec.isEmpty() || requiredItem.isEmpty() || requiredSlot == -1) return null;
 
             Optional<Direction> lookDirection = getLookDirection();
+            System.out.println("GeneralPlacementGuide#getPlacementContext lookDirection: " + lookDirection);
             boolean requiresShift = getUseShift(state);
 
             BlockHitResult blockHitResult = new BlockHitResult(hitVec.get(), validSide.get().getOpposite(), state.blockPos.offset(validSide.get()), false);

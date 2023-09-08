@@ -13,6 +13,7 @@ public class PrinterPlacementContext extends ItemPlacementContext {
     public final boolean shouldSneak;
     public final BlockHitResult hitResult;
     public final int requiredItemSlot;
+    public boolean canStealth = false;
 
     public PrinterPlacementContext(PlayerEntity player, BlockHitResult hitResult, ItemStack requiredItem, int requiredItemSlot) {
         this(player, hitResult, requiredItem, requiredItemSlot, null, false);
