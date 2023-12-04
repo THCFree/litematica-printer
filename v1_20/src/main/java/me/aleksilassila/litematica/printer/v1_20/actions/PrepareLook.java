@@ -1,7 +1,5 @@
 package me.aleksilassila.litematica.printer.v1_20.actions;
 
-import me.aleksilassila.litematica.printer.v1_20.LitematicaMixinMod;
-import me.aleksilassila.litematica.printer.v1_20.Printer;
 import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import net.minecraft.client.MinecraftClient;
@@ -12,13 +10,13 @@ import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Optional;
 
-public class PrepareAction extends Action {
+public class PrepareLook extends Action {
 //    public final Direction lookDirection;
 //    public final boolean requireSneaking;
 //    public final Item item;
@@ -34,40 +32,18 @@ public class PrepareAction extends Action {
 //    }
 
     public final PrinterPlacementContext context;
+    public Optional<Float> yaw = Optional.empty();
+    public Optional<Float> pitch = Optional.empty();
 
-    public boolean modifyYaw = true;
-    public boolean modifyPitch = true;
-    public float yaw = 0;
-    public float pitch = 0;
-
-    public PrepareAction(PrinterPlacementContext context) {
+    public PrepareLook(PrinterPlacementContext context) {
         this.context = context;
-
-        @Nullable
-        Direction lookDirection = context.lookDirection;
-
-        if (lookDirection != null && lookDirection.getAxis().isHorizontal()) {
-            this.yaw = lookDirection.asRotation();
-        } else {
-            this.modifyYaw = false;
-        }
-
-        if (lookDirection == Direction.UP) {
-            this.pitch = -90;
-        } else if (lookDirection == Direction.DOWN) {
-            this.pitch = 90;
-        } else if (lookDirection != null) {
-            this.pitch = 0;
-        } else {
-            this.modifyPitch = false;
-        }
     }
 
-    public PrepareAction(PrinterPlacementContext context, float yaw, float pitch) {
+    public PrepareLook(PrinterPlacementContext context, float yaw, float pitch) {
         this.context = context;
 
-        this.yaw = yaw;
-        this.pitch = pitch;
+        this.yaw = Optional.of(yaw);
+        this.pitch = Optional.of(pitch);
     }
 
     static float[] getNeededRotations(ClientPlayerEntity player, Vec3d vec) {
@@ -154,7 +130,7 @@ public class PrepareAction extends Action {
 //        }
 
         if (context.canStealth) {
-            ArrayList<PlayerMoveC2SPacket.LookAndOnGround> packets = new ArrayList<>();
+            ArrayList<PlayerMoveC2SPacket.Full> packets = new ArrayList<>();
             float[] targetRot = getNeededRotations(player, context.getHitPos());
             float[] lastRot = new float[]{player.getYaw(), player.getPitch()};
             double maxDeltaYaw = PrinterConfig.INTERPOLATE_LOOK_MAX_ANGLE.getDoubleValue();
@@ -192,8 +168,7 @@ public class PrepareAction extends Action {
                 }
 
                 System.out.println("Sending yaw for stealth 1: " + lastRot[0] + ", pitch: " + lastRot[1]);
-                PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(lastRot[0], lastRot[1], player.isOnGround());
-                // PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), lastRot[0], lastRot[1], player.isOnGround());
+                PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), lastRot[0], lastRot[1], player.isOnGround());
 
                 if (PrinterConfig.DEBUG_MODE.getBooleanValue()) {
                     player.setYaw(lastRot[0]);
@@ -202,32 +177,31 @@ public class PrepareAction extends Action {
                 packets.add(packet);
             }
 
-            for (PlayerMoveC2SPacket.LookAndOnGround packet : packets) {
-                if (Printer.lastRotation == null) {
-                    Printer.lastRotation = new Vec2f(player.getYaw(), player.getPitch());
-                }
-                this.yaw = packet.getYaw(player.getYaw());
-                this.pitch = packet.getPitch(player.getPitch());
+            for (PlayerMoveC2SPacket.Full packet : packets) {
+                this.yaw = Optional.of(packet.getYaw(player.getYaw()));
+                this.pitch = Optional.of(packet.getPitch(player.getPitch()));
                 player.networkHandler.sendPacket(packet);
             }
 
-            PlayerMoveC2SPacket.LookAndOnGround lastPacket = packets.get(packets.size() - 1);
+            PlayerMoveC2SPacket.Full lastPacket = packets.get(packets.size() - 1);
             float randomnessDistance = 5f;
             float yawRandomness = (float) (Math.random() * randomnessDistance * 2 - randomnessDistance);
             float pitchRandomness = (float) (Math.random() * randomnessDistance * 2 - randomnessDistance);
             float yaw = lastPacket.getYaw(player.getYaw()) + yawRandomness;
             float pitch = lastPacket.getPitch(player.getPitch()) + pitchRandomness;
 
-            this.yaw = yaw;
-            this.pitch = pitch;
+            this.yaw = Optional.of(yaw);
+            this.pitch = Optional.of(pitch);
             player.networkHandler.sendPacket(lastPacket);
-        } else if (modifyPitch || modifyYaw) {
-            float yaw = modifyYaw ? this.yaw : player.getYaw();
-            float pitch = modifyPitch ? this.pitch : player.getPitch();
+        } else {
+            float yaw = player.getYaw();
+            float pitch = player.getPitch();
 
             System.out.println("Sending yaw for modified yaw: " + yaw + ", pitch: " + pitch);
-            PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, player.isOnGround());
+            PlayerMoveC2SPacket packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), yaw, pitch, player.isOnGround());
 
+            this.yaw = Optional.of(yaw);
+            this.pitch = Optional.of(pitch);
             player.networkHandler.sendPacket(packet);
         }
 

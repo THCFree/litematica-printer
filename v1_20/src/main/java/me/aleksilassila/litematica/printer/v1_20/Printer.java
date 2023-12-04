@@ -16,9 +16,11 @@ import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -30,6 +32,9 @@ public class Printer {
     public final ActionHandler actionHandler;
 
     private final Guides interactionGuides = new Guides();
+    public static int inactivityCounter = 0;
+    @Nullable
+    public static Vec2f lastRotation = null;
 
     public Printer(@NotNull MinecraftClient client, @NotNull ClientPlayerEntity player) {
         this.player = player;
@@ -39,6 +44,20 @@ public class Printer {
 
     public boolean onGameTick() {
         WorldSchematic worldSchematic = SchematicWorldHandler.getSchematicWorld();
+
+        // If the inactivityCounter is greater than the inactive snap back value, then set the lastRotation to the current rotation
+        // This is used to snap back to the last rotation when the player is inactive
+        inactivityCounter++;
+        if (PrinterConfig.SNAP_BACK.getBooleanValue()) {
+            if (inactivityCounter == PrinterConfig.INACTIVE_SNAP_BACK.getIntegerValue()) {
+                if (lastRotation != null) {
+                    player.setYaw(lastRotation.x);
+                    player.setPitch(lastRotation.y);
+                }
+            } else if (inactivityCounter > PrinterConfig.INACTIVE_SNAP_BACK.getIntegerValue()) {
+                lastRotation = new Vec2f(player.getYaw(), player.getPitch());
+            }
+        }
 
         if (!actionHandler.acceptsActions()) return false;
 
@@ -66,7 +85,7 @@ public class Printer {
 
             for (Guide guide : guides) {
                 if (guide.canExecute(player)) {
-                    System.out.println("Executing Guide:" + guide);
+                    // System.out.println("Executing Guide:" + guide);
                     List<Action> actions = guide.execute(player);
                     // System.out.println("Actions: " + actions);
                     for (Action a : actions) {

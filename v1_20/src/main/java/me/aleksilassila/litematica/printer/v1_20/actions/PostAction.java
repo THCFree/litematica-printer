@@ -17,7 +17,7 @@ public class PostAction extends PrepareAction {
     @Override
     public void send(MinecraftClient client, ClientPlayerEntity player) {
         if (context.canStealth) {
-            PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), 0, 0, player.isOnGround());
+            PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(this.yaw, this.pitch, player.isOnGround());
 
             if (PrinterConfig.DEBUG_MODE.getBooleanValue()) {
                 player.setYaw(this.yaw);

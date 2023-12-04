@@ -34,8 +34,9 @@ public class ActionHandler {
 
         if (nextAction != null) {
             if (LitematicaMixinMod.DEBUG) System.out.println("Sending action " + nextAction);
-            System.out.println("Sending action " + nextAction);
+            // System.out.println("Sending action " + nextAction);
             nextAction.send(client, player);
+            Printer.inactivityCounter = 0;
             if (!nextAction.isSync) {
                 tick++;
             }

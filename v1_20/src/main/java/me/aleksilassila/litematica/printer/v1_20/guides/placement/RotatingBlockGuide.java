@@ -1,5 +1,6 @@
 package me.aleksilassila.litematica.printer.v1_20.guides.placement;
 
+import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import me.aleksilassila.litematica.printer.v1_20.SchematicBlockState;
 import me.aleksilassila.litematica.printer.v1_20.actions.Action;
@@ -40,19 +41,20 @@ public class RotatingBlockGuide extends GeneralPlacementGuide {
     public @NotNull List<Action> execute(ClientPlayerEntity player) {
         PrinterPlacementContext ctx = getPlacementContext(player);
 
-        if (ctx == null) return new ArrayList<>();
+        // if (ctx == null) return new ArrayList<>();
+        return new ArrayList<>();
 
-        int rotation = getProperty(state.targetState, Properties.ROTATION).orElse(0);
-        if (targetState.getBlock() instanceof BannerBlock || targetState.getBlock() instanceof SignBlock) {
-            rotation = (rotation + 8) % 16;
-        }
-
-        int distTo0 = rotation > 8 ? 16 - rotation : rotation;
-        float yaw = Math.round(distTo0 / 8f * 180f * (rotation > 8 ? -1 : 1));
-
-        List<Action> actions = super.execute(player);
-        actions.set(0, new PrepareAction(ctx, yaw, 0));
-
-        return actions;
+//        int rotation = getProperty(state.targetState, Properties.ROTATION).orElse(0);
+//        if (targetState.getBlock() instanceof BannerBlock || targetState.getBlock() instanceof SignBlock) {
+//            rotation = (rotation + 8) % 16;
+//        }
+//
+//        int distTo0 = rotation > 8 ? 16 - rotation : rotation;
+//        float yaw = Math.round(distTo0 / 8f * 180f * (rotation > 8 ? -1 : 1));
+//
+//        List<Action> actions = super.execute(player);
+//        actions.set(0, new PrepareAction(ctx, yaw, 0));
+//
+//        return actions;
     }
 }
