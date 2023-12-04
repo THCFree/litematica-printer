@@ -32,6 +32,7 @@ public class Printer {
     public final ActionHandler actionHandler;
 
     private final Guides interactionGuides = new Guides();
+    private final InventoryManager inventoryManager = InventoryManager.getInstance();
     public static int inactivityCounter = 0;
     @Nullable
     public static Vec2f lastRotation = null;
@@ -58,6 +59,8 @@ public class Printer {
                 lastRotation = new Vec2f(player.getYaw(), player.getPitch());
             }
         }
+
+        inventoryManager.tick();
 
         if (!actionHandler.acceptsActions()) return false;
 

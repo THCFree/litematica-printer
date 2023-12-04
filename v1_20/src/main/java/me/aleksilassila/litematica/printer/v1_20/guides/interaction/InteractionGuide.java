@@ -30,7 +30,7 @@ public abstract class InteractionGuide extends Guide {
         List<Action> actions = new ArrayList<>();
 
         BlockHitResult hitResult = new BlockHitResult(Vec3d.ofCenter(state.blockPos), Direction.UP, state.blockPos, false);
-        ItemStack requiredItem = getRequiredItem(player).orElse(ItemStack.EMPTY);
+        ItemStack requiredItem = getRequiredItem(player).stream().findFirst().orElse(ItemStack.EMPTY);
         int requiredSlot = getRequiredItemStackSlot(player);
 
         if (requiredSlot == -1) return actions;

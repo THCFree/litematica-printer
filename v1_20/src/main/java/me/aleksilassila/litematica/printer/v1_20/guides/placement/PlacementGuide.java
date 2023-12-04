@@ -38,15 +38,13 @@ abstract public class PlacementGuide extends Guide {
     }
 
     protected Optional<Block> getRequiredItemAsBlock(ClientPlayerEntity player) {
-        Optional<ItemStack> requiredItem = getRequiredItem(player);
+        ItemStack requiredItem = getRequiredItem(player).stream().findFirst().orElse(ItemStack.EMPTY);
 
         if (requiredItem.isEmpty()) {
             return Optional.empty();
         } else {
-            ItemStack itemStack = requiredItem.get();
-
-            if (itemStack.getItem() instanceof BlockItem)
-                return Optional.of(((BlockItem) itemStack.getItem()).getBlock());
+            if (requiredItem.getItem() instanceof BlockItem)
+                return Optional.of(((BlockItem) requiredItem.getItem()).getBlock());
             else return Optional.empty();
         }
     }

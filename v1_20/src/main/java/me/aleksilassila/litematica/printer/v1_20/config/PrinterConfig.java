@@ -30,6 +30,7 @@ public class PrinterConfig {
     public static final ConfigBoolean CARPET_MODE = new ConfigBoolean("printerCarpetMode", false, "Carpet mode. For placing carpets on the top of blocks.");
     public static final ConfigInteger INACTIVE_SNAP_BACK = new ConfigInteger("printerInactiveSnapBack", 10, "Snap back to the view direction after placing a block.");
     public static final ConfigDouble MIN_BLOCK_HIT_ANGLE = new ConfigDouble("printerMaxBlockHitAngle", 1, 0, 30, "The maximum angle between the player look direction and the block hit direction.");
+    public static final ConfigInteger INVENTORY_DELAY = new ConfigInteger("printerInventoryDelay", 2, 0, 100, "The delay between each inventory action. 0 = no delay.");
     public ImmutableList<IConfigBase> getOptions() {
         List<IConfigBase> list = new java.util.ArrayList<>(Configs.Generic.OPTIONS);
         list.add(DEBUG_MODE);
@@ -41,6 +42,7 @@ public class PrinterConfig {
         list.add(CARPET_MODE);
         list.add(INACTIVE_SNAP_BACK);
         list.add(MIN_BLOCK_HIT_ANGLE);
+        list.add(INVENTORY_DELAY);
         return ImmutableList.copyOf(list);
     }
 }

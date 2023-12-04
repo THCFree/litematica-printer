@@ -1,5 +1,6 @@
 package me.aleksilassila.litematica.printer.v1_20.actions;
 
+import me.aleksilassila.litematica.printer.v1_20.InventoryManager;
 import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import net.minecraft.client.MinecraftClient;
@@ -89,7 +90,7 @@ public class PrepareLook extends Action {
     @Override
     public void send(MinecraftClient client, ClientPlayerEntity player) {
         ItemStack itemStack = context.getStack();
-        int slot = context.requiredItemSlot;
+        int slot = InventoryManager.getSlotWithItem(player, context.getStack());
 
         if (itemStack != null) {
             PlayerInventory inventory = player.getInventory();
@@ -99,10 +100,11 @@ public class PrepareLook extends Action {
                 inventory.addPickBlock(itemStack);
                 client.interactionManager.clickCreativeStack(player.getStackInHand(Hand.MAIN_HAND), 36 + inventory.selectedSlot);
             } else if (slot != -1) {
-                if (PlayerInventory.isValidHotbarIndex(slot)) {
+                if (PlayerInventory.isValidHotbarIndex(slot) && InventoryManager.getInstance().isSlotFree(slot)) {
                     inventory.selectedSlot = slot;
                 } else {
-                    client.interactionManager.pickFromInventory(slot);
+                    InventoryManager.getInstance().requestStack(context.getStack());
+                    return;
                 }
             }
         }

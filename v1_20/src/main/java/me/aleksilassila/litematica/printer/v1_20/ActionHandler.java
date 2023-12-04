@@ -14,6 +14,7 @@ public class ActionHandler {
     private final ClientPlayerEntity player;
 
     private final Queue<Action> actionQueue = new LinkedList<>();
+    private final InventoryManager inventoryManager = InventoryManager.getInstance();
     public PrepareAction lookAction = null;
 
     public ActionHandler(MinecraftClient client, ClientPlayerEntity player) {

@@ -69,7 +69,7 @@ public class GuesserGuide extends GeneralPlacementGuide {
     public PrinterPlacementContext getPlacementContext(ClientPlayerEntity player) {
         if (contextCache != null && !LitematicaMixinMod.DEBUG) return contextCache;
 
-        ItemStack requiredItem = getRequiredItem(player).orElse(ItemStack.EMPTY);
+        ItemStack requiredItem = getRequiredItem(player).stream().findFirst().orElse(ItemStack.EMPTY);
         int slot = getRequiredItemStackSlot(player);
 
         if (slot == -1) return null;

@@ -53,12 +53,12 @@ public class BlockReplacementGuide extends PlacementGuide {
 
     @Override
     public @Nullable PrinterPlacementContext getPlacementContext(ClientPlayerEntity player) {
-        Optional<ItemStack> requiredItem = getRequiredItem(player);
+        ItemStack requiredItem = getRequiredItem(player).stream().findFirst().orElse(ItemStack.EMPTY);
         int slot = getRequiredItemStackSlot(player);
         if (requiredItem.isEmpty() || slot == -1) return null;
 
         BlockHitResult hitResult = new BlockHitResult(Vec3d.ofCenter(state.blockPos), Direction.UP, state.blockPos, false);
-        return new PrinterPlacementContext(player, hitResult, requiredItem.get(), slot);
+        return new PrinterPlacementContext(player, hitResult, requiredItem, slot);
     }
 
     @Override

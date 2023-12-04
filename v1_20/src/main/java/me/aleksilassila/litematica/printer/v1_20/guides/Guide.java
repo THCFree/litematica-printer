@@ -32,7 +32,7 @@ abstract public class Guide extends BlockHelperImpl {
         return getRequiredItemStackSlot(player) != -1;
     }
 
-    protected int getSlotWithItem(ClientPlayerEntity player, ItemStack itemStack) {
+    public int getSlotWithItem(ClientPlayerEntity player, ItemStack itemStack) {
         PlayerInventory inventory = player.getInventory();
 
         for (int i = 0; i < inventory.main.size(); ++i) {
@@ -50,10 +50,10 @@ abstract public class Guide extends BlockHelperImpl {
             return player.getInventory().selectedSlot;
         }
 
-        Optional<ItemStack> requiredItem = getRequiredItem(player);
+        ItemStack requiredItem = getRequiredItem(player).stream().findFirst().orElse(ItemStack.EMPTY);
         if (requiredItem.isEmpty()) return -1;
 
-        return getSlotWithItem(player, requiredItem.get());
+        return getSlotWithItem(player, requiredItem);
     }
 
     public boolean canExecute(ClientPlayerEntity player) {
@@ -73,18 +73,18 @@ abstract public class Guide extends BlockHelperImpl {
      * Returns the first required item that player has access to,
      * or empty if the items are inaccessible.
      */
-    protected Optional<ItemStack> getRequiredItem(ClientPlayerEntity player) {
+    protected List<ItemStack> getRequiredItem(ClientPlayerEntity player) {
         List<ItemStack> requiredItems = getRequiredItems();
 
         for (ItemStack requiredItem : requiredItems) {
-            if (player.getAbilities().creativeMode) return Optional.of(requiredItem);
+            if (player.getAbilities().creativeMode) return List.of(requiredItem);
 
             int slot = getSlotWithItem(player, requiredItem);
             if (slot > -1)
-                return Optional.of(requiredItem);
+                return List.of(requiredItem);
         }
 
-        return Optional.empty();
+        return List.of();
     }
 
     protected boolean statesEqualIgnoreProperties(BlockState state1, BlockState state2, Property<?>... propertiesToIgnore) {
