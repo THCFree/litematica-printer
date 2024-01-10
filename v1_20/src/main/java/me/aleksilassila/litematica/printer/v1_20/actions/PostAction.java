@@ -19,7 +19,7 @@ public class PostAction extends PrepareAction {
         if (context.canStealth) {
             PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(this.yaw, this.pitch, player.isOnGround());
 
-            if (PrinterConfig.DEBUG_MODE.getBooleanValue()) {
+            if (PrinterConfig.ROTATE_PLAYER.getBooleanValue()) {
                 player.setYaw(this.yaw);
                 player.setPitch(this.pitch);
             }

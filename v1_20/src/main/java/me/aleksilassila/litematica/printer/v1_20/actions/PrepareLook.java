@@ -172,7 +172,7 @@ public class PrepareLook extends Action {
                 System.out.println("Sending yaw for stealth 1: " + lastRot[0] + ", pitch: " + lastRot[1]);
                 PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), lastRot[0], lastRot[1], player.isOnGround());
 
-                if (PrinterConfig.DEBUG_MODE.getBooleanValue()) {
+                if (PrinterConfig.ROTATE_PLAYER.getBooleanValue()) {
                     player.setYaw(lastRot[0]);
                     player.setPitch(lastRot[1]);
                 }

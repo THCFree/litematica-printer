@@ -195,7 +195,7 @@ public class PrepareAction extends Action {
                 PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(lastRot[0], lastRot[1], player.isOnGround());
                 // PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), lastRot[0], lastRot[1], player.isOnGround());
 
-                if (PrinterConfig.DEBUG_MODE.getBooleanValue()) {
+                if (PrinterConfig.ROTATE_PLAYER.getBooleanValue()) {
                     player.setYaw(lastRot[0]);
                     player.setPitch(lastRot[1]);
                 }
