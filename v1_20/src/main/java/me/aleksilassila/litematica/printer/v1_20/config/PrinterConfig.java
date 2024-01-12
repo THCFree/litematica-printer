@@ -23,6 +23,8 @@ public class PrinterConfig {
         }
         return INSTANCE;
     }
+    public static final ConfigInteger TICK_DELAY = new ConfigInteger("printerTickDelay", 8, 0, 100, "Tick delay between actions. 0 = no delay.");
+    public static final ConfigInteger BLOCK_TIMEOUT = new ConfigInteger("printerBlockTimeout", 10, 0, 100, "How many ticks to wait before trying to place the same block again.");
     public static final ConfigBoolean ROTATE_PLAYER = new ConfigBoolean("printerRotatePlayer", false, "Rotate the player to face the block to place.");
     public static final ConfigBoolean SNAP_BACK = new ConfigBoolean("printerSnapBask", false, "Snap back to the view direction after placing a block.");
     public static final ConfigBoolean STOP_ON_MOVEMENT = new ConfigBoolean("printerStopOnMovement", true, "Stop the printer if the player velocity is to high.");

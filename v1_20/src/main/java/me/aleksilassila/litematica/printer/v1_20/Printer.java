@@ -1,6 +1,8 @@
 package me.aleksilassila.litematica.printer.v1_20;
 
 import fi.dy.masa.litematica.data.DataManager;
+import fi.dy.masa.litematica.materials.MaterialCache;
+import fi.dy.masa.litematica.util.InventoryUtils;
 import fi.dy.masa.litematica.util.RayTraceUtils;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
@@ -10,30 +12,37 @@ import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.guides.Guide;
 import me.aleksilassila.litematica.printer.v1_20.guides.Guides;
 import me.aleksilassila.litematica.printer.v1_20.implementation.actions.InteractActionImpl;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerAbilities;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
 public class Printer {
     @NotNull
     public final ClientPlayerEntity player;
+    MinecraftClient mc = MinecraftClient.getInstance();
 
     public final ActionHandler actionHandler;
 
     private final Guides interactionGuides = new Guides();
     private final InventoryManager inventoryManager = InventoryManager.getInstance();
     public static int inactivityCounter = 0;
+    static final LinkedList<BlockTimeout> blockPosTimeout = new LinkedList<>();
+    int delayCounter = 0;
     @Nullable
     public static Vec2f lastRotation = null;
 
@@ -43,8 +52,29 @@ public class Printer {
         this.actionHandler = new ActionHandler(client, player);
     }
 
+    public void onMiddleClick() {
+        BlockPos pos;
+        boolean closest = false;
+        if (mc.world == null || mc.player == null) return;
+        if (closest) {
+            pos = RayTraceUtils.getSchematicWorldTraceIfClosest(mc.world, mc.player, 6.0);
+        } else {
+            pos = RayTraceUtils.getFurthestSchematicWorldBlockBeforeVanilla(mc.world, mc.player, 6.0, true);
+        }
+
+        if (pos != null) {
+            World world = SchematicWorldHandler.getSchematicWorld();
+            if (world == null) return;
+            BlockState state = world.getBlockState(pos);
+            ItemStack stack = MaterialCache.getInstance().getRequiredBuildItemForState(state, world, pos);
+            InventoryUtils.schematicWorldPickBlock(stack, pos, world, mc);
+        }
+    }
+
     public boolean onGameTick() {
         WorldSchematic worldSchematic = SchematicWorldHandler.getSchematicWorld();
+        blockPosTimeout.forEach((entry) -> entry.timer--);
+        blockPosTimeout.removeIf((entry) -> entry.timer <= 0);
 
         // If the inactivityCounter is greater than the inactive snap back value, then set the lastRotation to the current rotation
         // This is used to snap back to the last rotation when the player is inactive
@@ -60,11 +90,19 @@ public class Printer {
             }
         }
 
+        actionHandler.onGameTick();
         inventoryManager.tick();
 
-        if (!actionHandler.acceptsActions()) return false;
+        // if (!actionHandler.acceptsActions()) return false;
 
         if (worldSchematic == null) return false;
+
+        if (PrinterConfig.TICK_DELAY.getIntegerValue() != 0 && delayCounter < PrinterConfig.TICK_DELAY.getIntegerValue()) {
+            delayCounter++;
+            return false;
+        } else {
+            delayCounter = 0;
+        }
 
         if (!LitematicaMixinMod.PRINT_MODE.getBooleanValue() && !LitematicaMixinMod.PRINT.getKeybind().isPressed())
             return false;
@@ -76,6 +114,13 @@ public class Printer {
         if (PrinterConfig.STOP_ON_MOVEMENT.getBooleanValue() && player.getVelocity().length() > 0.1) return false; // Stop if the player is moving
 
         List<BlockPos> positions = getReachablePositions();
+        boolean didPlace = false;
+        boolean acceptsMoreActions = false;
+
+        if (PrinterConfig.BLOCK_TIMEOUT.getIntegerValue() != 0) {
+            positions = positions.stream().filter((pos) -> blockPosTimeout.stream().noneMatch((entry) -> entry.pos.equals(pos))).toList(); // From block timeout. Don't place already placed blocks.
+        }
+
         findBlock:
         for (BlockPos position : positions) {
             SchematicBlockState state = new SchematicBlockState(player.getWorld(), worldSchematic, position);
@@ -171,5 +216,19 @@ public class Printer {
                     double bDistance = this.player.getPos().squaredDistanceTo(Vec3d.ofCenter(b));
                     return Double.compare(aDistance, bDistance);
                 }).toList();
+    }
+
+    public static void addTimeout(BlockPos pos) {
+        blockPosTimeout.add(new BlockTimeout(pos, PrinterConfig.BLOCK_TIMEOUT.getIntegerValue()));
+    }
+
+    public static class BlockTimeout {
+        int timer = 0;
+        BlockPos pos;
+
+        public BlockTimeout(BlockPos pos, int timer) {
+            this.pos = pos;
+            this.timer = timer;
+        }
     }
 }

@@ -214,6 +214,7 @@ public class PrepareLook extends Action {
             player.input.sneaking = false;
             player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
         }
+        isSync = true;
     }
 
     @Override

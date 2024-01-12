@@ -23,12 +23,13 @@ public class InteractActionImpl extends InteractAction {
     }
 
     @Override
-    protected void interact(MinecraftClient client, ClientPlayerEntity player, Hand hand, BlockHitResult hitResult) {
+    protected ActionResult interact(MinecraftClient client, ClientPlayerEntity player, Hand hand, BlockHitResult hitResult) {
         ActionResult result = client.interactionManager.interactBlock(player, hand, hitResult);
         if (!result.isAccepted()) {
             if (LitematicaMixinMod.DEBUG) MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal("Failed to interact with block got " + result));
         }
         // client.interactionManager.interactItem(player, hand);
         // client.getNetworkHandler().sendPacket(new HandSwingC2SPacket(Hand.MAIN_HAND));
+        return result;
     }
 }

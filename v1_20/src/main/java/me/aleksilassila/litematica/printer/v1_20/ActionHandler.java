@@ -2,6 +2,7 @@ package me.aleksilassila.litematica.printer.v1_20;
 
 import me.aleksilassila.litematica.printer.v1_20.actions.Action;
 import me.aleksilassila.litematica.printer.v1_20.actions.PrepareAction;
+import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 
@@ -14,7 +15,6 @@ public class ActionHandler {
     private final ClientPlayerEntity player;
 
     private final Queue<Action> actionQueue = new LinkedList<>();
-    private final InventoryManager inventoryManager = InventoryManager.getInstance();
     public PrepareAction lookAction = null;
 
     public ActionHandler(MinecraftClient client, ClientPlayerEntity player) {
@@ -25,27 +25,34 @@ public class ActionHandler {
     private int tick = 0;
 
     public void onGameTick() {
-        int tickRate = LitematicaMixinMod.PRINTING_INTERVAL.getIntegerValue();
+        int tickRate = PrinterConfig.TICK_DELAY.getIntegerValue();
         if (tick % tickRate != 0) {
             tick++;
+            actionQueue.clear();
             return;
         }
 
-        Action nextAction = actionQueue.poll();
+        boolean actionTaken = false;
+        while (!actionTaken) {
+            Action nextAction = actionQueue.poll();
 
-        if (nextAction != null) {
-            if (LitematicaMixinMod.DEBUG) System.out.println("Sending action " + nextAction);
-            // System.out.println("Sending action " + nextAction);
-            nextAction.send(client, player);
-            Printer.inactivityCounter = 0;
-            if (!nextAction.isSync) {
+            if (nextAction != null) {
+                if (LitematicaMixinMod.DEBUG) System.out.println("Sending action " + nextAction);
+                // System.out.println("Sending action " + nextAction);
+                nextAction.send(client, player);
+                Printer.inactivityCounter = 0;
+                if (!nextAction.isSync) {
+                    actionTaken = true;
+                    tick++;
+                }
+            } else {
+                lookAction = null;
                 tick++;
+                actionTaken = true;
             }
-        } else {
-            lookAction = null;
-            tick++;
         }
         tick %= tickRate;
+        actionQueue.clear();
     }
 
     public boolean acceptsActions() {

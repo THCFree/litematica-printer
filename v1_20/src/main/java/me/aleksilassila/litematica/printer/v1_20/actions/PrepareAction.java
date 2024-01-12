@@ -61,6 +61,7 @@ public class PrepareAction extends Action {
         } else {
             this.modifyPitch = false;
         }
+        isSync = true;
     }
 
     public PrepareAction(PrinterPlacementContext context, float yaw, float pitch) {
