@@ -2,11 +2,14 @@ package me.aleksilassila.litematica.printer.v1_20.config;
 
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.litematica.config.Configs;
+import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.IConfigBase;
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
 import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
+import fi.dy.masa.malilib.event.InputEventHandler;
+import fi.dy.masa.malilib.hotkeys.KeyCallbackToggleBooleanConfigWithMessage;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 
 import javax.annotation.Nullable;
@@ -57,5 +60,11 @@ public class PrinterConfig {
         list.add(NO_PLACEMENT_CACHE);
         list.add(STRICT_BLOCK_FACE_CHECK);
         return ImmutableList.copyOf(list);
+    }
+
+    public static void onInitialize() {
+        MaLiLib.logger.info("PrinterConfig.onInitialize");
+        FREE_LOOK_TOGGLE.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(FREE_LOOK));
+        InputEventHandler.getKeybindManager().registerKeybindProvider(PrinterInputHandler.getInstance());
     }
 }

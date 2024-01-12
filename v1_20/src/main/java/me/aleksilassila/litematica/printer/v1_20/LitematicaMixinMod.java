@@ -20,6 +20,8 @@ public class LitematicaMixinMod implements ModInitializer {
     public static Printer printer;
     public static PrinterConfig printerConfig = PrinterConfig.getInstance();
     public static boolean DEBUG = false;
+    public static MovementHandler movementHandler = new MovementHandler();
+    public static FreeLook freeLook = new FreeLook();
     // Config settings
     public static final ConfigInteger PRINTING_INTERVAL = new ConfigInteger("printingInterval", 12, 1, 40, "Printing interval. Lower values mean faster printing speed.\nIf the printer creates \"ghost blocks\" or blocks are facing the wrong way, raise this value.");
     public static final ConfigDouble PRINTING_RANGE = new ConfigDouble("printingRange", 5, 2.5, 5, "Printing block place range\nLower values are recommended for servers.");
@@ -56,5 +58,6 @@ public class LitematicaMixinMod implements ModInitializer {
     @Override
     public void onInitialize() {
         TOGGLE_PRINTING_MODE.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(PRINT_MODE));
+        PrinterConfig.onInitialize();
     }
 }
