@@ -4,7 +4,6 @@ import me.aleksilassila.litematica.printer.v1_20.FreeLook;
 import me.aleksilassila.litematica.printer.v1_20.LitematicaMixinMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.util.math.MathHelper;
 import org.objectweb.asm.Opcodes;
@@ -12,11 +11,8 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Mouse.class)
@@ -25,8 +21,6 @@ public class MixinMouse {
     @Shadow private double cursorDeltaY;
 
     @Shadow @Final private MinecraftClient client;
-    @Unique
-    MinecraftClient mc = MinecraftClient.getInstance();
     @Inject(method = "updateMouse",
             at = @At(value = "FIELD",
                     target = "Lnet/minecraft/client/Mouse;cursorDeltaX:D",
@@ -45,9 +39,6 @@ public class MixinMouse {
             int m = 1;
             if (this.client.options.getInvertYMouse().getValue()) {
                 m = -1;
-            }
-            if (mc.options.getPerspective() != Perspective.THIRD_PERSON_BACK) {
-                mc.options.setPerspective(Perspective.THIRD_PERSON_BACK);
             }
             freeLook.setCameraYaw((float) (freeLook.getCameraYaw() + k * 0.15F));
             float pitch = MathHelper.clamp((float) (freeLook.getCameraPitch() + (l * (double) m) * 0.15F), -90.0F, 90.0F);

@@ -39,7 +39,7 @@ public class Printer {
     public final ActionHandler actionHandler;
 
     private final Guides interactionGuides = new Guides();
-    private final InventoryManager inventoryManager = InventoryManager.getInstance();
+    public static final InventoryManager inventoryManager = InventoryManager.getInstance();
     public static int inactivityCounter = 0;
     static final LinkedList<BlockTimeout> blockPosTimeout = new LinkedList<>();
     int delayCounter = 0;

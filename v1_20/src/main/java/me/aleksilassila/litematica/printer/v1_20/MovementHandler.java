@@ -3,22 +3,24 @@ package me.aleksilassila.litematica.printer.v1_20;
 import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.mixin.MixinAccessorKeyBinding;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.util.math.Vec3d;
 
 public class MovementHandler {
     private static final MinecraftClient mc = MinecraftClient.getInstance();
+    private boolean disableNextTick = false;
 
     public void onGameTick() {
         if (mc.player == null) return;
-        if (!PrinterConfig.FREE_LOOK.getBooleanValue()) return;
-
-//        if (onlyInThirdPerson.getValue()) {
-//            if (mc.options.getPerspective().isFirstPerson()) {
-//                return;
-//            }
-//        }
+        if (!PrinterConfig.FREE_LOOK.getBooleanValue()) {
+            if (disableNextTick) {
+                disableNextTick = false;
+                InputDirections.apply(InputDirections.getCurrentInput());
+            }
+            return;
+        }
 
         // Get current inputs
         InputDirections currentInputDirection = InputDirections.getCurrentInput();
@@ -83,8 +85,11 @@ public class MovementHandler {
         }
     }
 
-    enum InputDirections {
+    public void onDisable(ClientPlayerEntity player) {
+        disableNextTick = true;
+    }
 
+    enum InputDirections {
         FORWARD(0),
         FORWARD_LEFT(45),
         FORWARD_RIGHT(315),

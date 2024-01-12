@@ -1,6 +1,8 @@
 package me.aleksilassila.litematica.printer.v1_20.actions;
 
 import me.aleksilassila.litematica.printer.v1_20.InventoryManager;
+import me.aleksilassila.litematica.printer.v1_20.LitematicaMixinMod;
+import me.aleksilassila.litematica.printer.v1_20.Printer;
 import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import net.minecraft.client.MinecraftClient;
@@ -90,24 +92,28 @@ public class PrepareLook extends Action {
     @Override
     public void send(MinecraftClient client, ClientPlayerEntity player) {
         ItemStack itemStack = context.getStack();
-        int slot = InventoryManager.getSlotWithItem(player, context.getStack());
 
-        if (itemStack != null) {
-            PlayerInventory inventory = player.getInventory();
-
-            // This thing is straight from MinecraftClient#doItemPick()
-            if (player.getAbilities().creativeMode) {
-                inventory.addPickBlock(itemStack);
-                client.interactionManager.clickCreativeStack(player.getStackInHand(Hand.MAIN_HAND), 36 + inventory.selectedSlot);
-            } else if (slot != -1) {
-                if (PlayerInventory.isValidHotbarIndex(slot) && InventoryManager.getInstance().isSlotFree(slot)) {
-                    inventory.selectedSlot = slot;
-                } else {
-                    InventoryManager.getInstance().requestStack(context.getStack());
-                    return;
-                }
-            }
+        if (!Printer.inventoryManager.select(itemStack)) {
+            return;
         }
+//        int slot = InventoryManager.getSlotWithItem(player, context.getStack());
+//
+//        if (itemStack != null) {
+//            PlayerInventory inventory = player.getInventory();
+//
+//            // This thing is straight from MinecraftClient#doItemPick()
+//            if (player.getAbilities().creativeMode) {
+//                inventory.addPickBlock(itemStack);
+//                client.interactionManager.clickCreativeStack(player.getStackInHand(Hand.MAIN_HAND), 36 + inventory.selectedSlot);
+//            } else if (slot != -1) {
+//                if (PlayerInventory.isValidHotbarIndex(slot) && InventoryManager.getInstance().isSlotFree(slot)) {
+//                    inventory.selectedSlot = slot;
+//                } else {
+//                    InventoryManager.getInstance().requestStack(context.getStack());
+//                    return;
+//                }
+//            }
+//        }
 
 //        if (context.canStealth) {
 //            float[] targetRot = getNeededRotations(player, context.getHitPos());

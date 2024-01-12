@@ -1,19 +1,14 @@
 package me.aleksilassila.litematica.printer.v1_20;
 
 import fi.dy.masa.malilib.config.options.ConfigBoolean;
-import fi.dy.masa.malilib.hotkeys.IHotkeyCallback;
-import fi.dy.masa.malilib.hotkeys.IKeybind;
-import fi.dy.masa.malilib.hotkeys.KeyAction;
 import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
 
-import java.util.function.Consumer;
-
 public class FreeLook {
     float cameraYaw;
     float cameraPitch;
-    Perspective prevPerspective;
+    Perspective prevPerspective = Perspective.FIRST_PERSON;
     MinecraftClient mc = MinecraftClient.getInstance();
     boolean enabled = false;
 
@@ -27,6 +22,7 @@ public class FreeLook {
 
     private void setEnabled(ConfigBoolean configBoolean) {
         this.enabled = configBoolean.getBooleanValue();
+        System.out.println("FreeLook: " + enabled);
         if (enabled) {
             onEnable();
         } else {
@@ -44,7 +40,11 @@ public class FreeLook {
         cameraYaw = mc.player.getYaw();
         prevPerspective = mc.options.getPerspective();
 
-        if (prevPerspective != Perspective.THIRD_PERSON_BACK /*&& changePers.getValue()*/) mc.options.setPerspective(Perspective.THIRD_PERSON_BACK);
+        if (PrinterConfig.FREE_LOOK_THIRD_PERSON.getBooleanValue()) {
+            mc.options.setPerspective(Perspective.THIRD_PERSON_BACK);
+        } else {
+            mc.options.setPerspective(Perspective.FIRST_PERSON);
+        }
     }
 
     void onDisable() {
@@ -78,10 +78,5 @@ public class FreeLook {
 
     public Perspective getPrevPerspective() {
         return prevPerspective;
-    }
-
-    public enum Mode{
-        CAMERA,
-        PLAYER
     }
 }

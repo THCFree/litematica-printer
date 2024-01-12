@@ -36,35 +36,44 @@ public class PrinterConfig {
     public static final ConfigBoolean LENIENT_STEALTH = new ConfigBoolean("printerLeaneantStealth", true, "Lenient stealth mode. Good enough for grim and offers better placement speed.");
     public static final ConfigBoolean CARPET_MODE = new ConfigBoolean("printerCarpetMode", false, "Carpet mode. For placing carpets on the top of blocks.");
     public static final ConfigInteger INACTIVE_SNAP_BACK = new ConfigInteger("printerInactiveSnapBack", 10, "Snap back to the view direction after placing a block.");
-    public static final ConfigDouble MIN_BLOCK_HIT_ANGLE = new ConfigDouble("printerMaxBlockHitAngle", 1, 0, 30, "The maximum angle between the player look direction and the block hit direction.");
     public static final ConfigInteger INVENTORY_DELAY = new ConfigInteger("printerInventoryDelay", 2, 0, 100, "The delay between each inventory action. 0 = no delay.");
+    public static final ConfigBoolean INVENTORY_NO_ASYNC = new ConfigBoolean("printerInventoryNoMultiAction", true, "Only allow one inventory action at a time.");
+    public static final ConfigBoolean INVENTORY_PAUSE_PLACEMENT = new ConfigBoolean("printerInventoryPausePlacement", true, "Pause the printing process when the inventory is waiting on an action to finish.");
+    public static final ConfigInteger INVENTORY_AFTER_EQUIP_USE_DELAY = new ConfigInteger("printerInventoryAfterEquipUseDelay", 10, 0, 100, "Delay on an item usage after it landed in the hotbar slot.");
     public static final ConfigBoolean RAYCAST = new ConfigBoolean("printerRaycast", true, "Raycast the block to place to check if it is visible.");
     public static final ConfigBoolean NO_PLACEMENT_CACHE = new ConfigBoolean("printerNoPlacementCache", false, "Disable the placement cache. This will make the printer slower but more accurate.");
     public static final ConfigBoolean RAYCAST_STRICT_BLOCK_HIT = new ConfigBoolean("printerRaycastStrictBlockHit", true, "Check if the right side of the block is hit.");
     public static final ConfigBoolean PREVENT_DOUBLE_TAP_SPRINTING = new ConfigBoolean("printerPreventDoubleTapSprinting", true, "Prevent double tap sprinting when the printer is active.");
     public static final ConfigBoolean FREE_LOOK = new ConfigBoolean("printerFreeLook", false, "Free look mode. Allows you to look around while the printer is active.");
     public static final ConfigHotkey FREE_LOOK_TOGGLE = new ConfigHotkey("printerFreeLook", "LEFT_ALT", KeybindSettings.MODIFIER_INGAME, "Free look mode. Allows you to look around while the printer is active.");
+    public static final ConfigBoolean FREE_LOOK_THIRD_PERSON = new ConfigBoolean("printerFreeLookThirdPerson", true, "Free look mode. Allows you to look around while the printer is active.");
     public static final ConfigBoolean STRICT_BLOCK_FACE_CHECK = new ConfigBoolean("printerStrictBlockFaceCheck", true, "Places only against block faces that are facing the player.");
 
     public ImmutableList<IConfigBase> getOptions() {
         List<IConfigBase> list = new java.util.ArrayList<>(Configs.Generic.OPTIONS);
         list.add(TICK_DELAY);
+        list.add(BLOCK_TIMEOUT);
         list.add(ROTATE_PLAYER);
         list.add(STOP_ON_MOVEMENT);
         list.add(CARPET_MODE);
-        list.add(MIN_BLOCK_HIT_ANGLE);
         list.add(INVENTORY_DELAY);
+        list.add(INVENTORY_NO_ASYNC);
+        list.add(INVENTORY_PAUSE_PLACEMENT);
+        list.add(INVENTORY_AFTER_EQUIP_USE_DELAY);
         list.add(RAYCAST);
         list.add(NO_PLACEMENT_CACHE);
         list.add(RAYCAST_STRICT_BLOCK_HIT);
-        list.add(NO_PLACEMENT_CACHE);
+        list.add(PREVENT_DOUBLE_TAP_SPRINTING);
+        list.add(FREE_LOOK);
+        list.add(FREE_LOOK_TOGGLE);
         list.add(STRICT_BLOCK_FACE_CHECK);
+        list.add(FREE_LOOK_THIRD_PERSON);
         return ImmutableList.copyOf(list);
     }
 
     public static void onInitialize() {
         MaLiLib.logger.info("PrinterConfig.onInitialize");
-        FREE_LOOK_TOGGLE.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(FREE_LOOK));
+        FREE_LOOK_TOGGLE.getKeybind().setCallback(new FreeLookKeyCallbackToggle(FREE_LOOK));
         InputEventHandler.getKeybindManager().registerKeybindProvider(PrinterInputHandler.getInstance());
     }
 }
