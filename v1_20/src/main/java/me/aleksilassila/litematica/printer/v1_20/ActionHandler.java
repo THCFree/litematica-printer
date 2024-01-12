@@ -26,7 +26,7 @@ public class ActionHandler {
 
     public void onGameTick() {
         int tickRate = PrinterConfig.TICK_DELAY.getIntegerValue();
-        if (tick % tickRate != 0) {
+        if (tickRate != 0 && tick % tickRate != 0) {
             tick++;
             actionQueue.clear();
             return;
@@ -51,7 +51,11 @@ public class ActionHandler {
                 actionTaken = true;
             }
         }
-        tick %= tickRate;
+        if (tickRate != 0) {
+            tick %= tickRate;
+        } else {
+            tick = 0;
+        }
         actionQueue.clear();
     }
 

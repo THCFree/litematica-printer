@@ -45,6 +45,7 @@ public class PrinterConfig {
 
     public ImmutableList<IConfigBase> getOptions() {
         List<IConfigBase> list = new java.util.ArrayList<>(Configs.Generic.OPTIONS);
+        list.add(TICK_DELAY);
         list.add(ROTATE_PLAYER);
         list.add(STOP_ON_MOVEMENT);
         list.add(CARPET_MODE);
