@@ -15,6 +15,7 @@ public class PrinterInputHandler implements IKeybindProvider {
     @Override
     public void addKeysToMap(IKeybindManager manager) {
         manager.addKeybindToMap(PrinterConfig.FREE_LOOK_TOGGLE.getKeybind());
+        manager.addKeybindToMap(PrinterConfig.PRINTER_PICK_BLOCK.getKeybind());
     }
 
     @Override

@@ -1,6 +1,10 @@
 package me.aleksilassila.litematica.printer.v1_20;
 
+import fi.dy.masa.litematica.config.Configs;
+import fi.dy.masa.litematica.materials.MaterialCache;
+import fi.dy.masa.litematica.world.WorldSchematic;
 import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -11,6 +15,8 @@ import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
 import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
@@ -97,6 +103,64 @@ public class InventoryManager {
         return false;
     }
 
+    public void pickSlot(WorldSchematic world, ClientPlayerEntity player, BlockPos pos) {
+        if (mc.interactionManager == null) {
+            return;
+        }
+        PlayerInventory inv = player.getInventory();
+        BlockState state = world.getBlockState(pos);
+        ItemStack stack = MaterialCache.getInstance().getRequiredBuildItemForState(state, world, pos);
+        int slot = inv.getSlotWithStack(stack);
+        boolean shouldPick = slot > 9;
+        if (slot != -1 && !shouldPick) {
+            player.getInventory().selectedSlot = slot;
+        } else if (slot != -1) {
+            mc.interactionManager.pickFromInventory(slot);
+        } else if (Configs.Generic.PICK_BLOCK_SHULKERS.getBooleanValue()) {
+            slot = findSlotWithBoxWithItem(player.getInventory(), stack, true);
+            if (slot > -1) {
+                if (slot > 9) {
+                    mc.interactionManager.pickFromInventory(slot);
+                } else {
+                    inv.selectedSlot = slot;
+                }
+            }
+        }
+    }
+
+    public static int findSlotWithBoxWithItem(PlayerInventory inventory, ItemStack stackReference, boolean lestFirst) {
+        int bestCount = lestFirst ? Integer.MAX_VALUE : 0;
+        int bestSlot = -1;
+
+        for(int slotNum = 0; slotNum < inventory.main.size(); slotNum += 1) {
+            ItemStack itemStack = inventory.getStack(slotNum);
+            int count = shulkerBoxItemCount(itemStack, stackReference);
+            if (lestFirst && count < bestCount && count > 0) {
+                bestCount = count;
+                bestSlot = slotNum;
+            } else if (!lestFirst && count > bestCount) {
+                bestCount = count;
+                bestSlot = slotNum;
+            }
+        }
+
+        return bestSlot;
+    }
+
+    public static int shulkerBoxItemCount(ItemStack stack, ItemStack referenceItem) {
+        DefaultedList<ItemStack> items = fi.dy.masa.malilib.util.InventoryUtils.getStoredItems(stack);
+        int count = 0;
+        if (!items.isEmpty()) {
+            for (ItemStack item : items) {
+                if (fi.dy.masa.malilib.util.InventoryUtils.areStacksEqual(item, referenceItem)) {
+                    count += item.getCount();
+                }
+            }
+        }
+
+        return count;
+    }
+
     private boolean requestStack(ItemStack stack) {
         if (stack.isEmpty()) {
             return false;
@@ -131,11 +195,8 @@ public class InventoryManager {
             } else {
                 int hotbarSlot = getHotbarSlotWithItem(player, itemStack);
                 if (hotbarSlot != -1 && InventoryManager.getInstance().isSlotFree(hotbarSlot)) {
-                    System.out.println("Selecting slot " + (hotbarSlot));
                     if (hotbarSlot < 0 || hotbarSlot > 8) {
-                        Error trace = new Error();
-                        System.out.println("Inventory slot out of bounds: " + hotbarSlot);
-                        trace.printStackTrace();
+                        System.err.println("Inventory slot out of bounds: " + hotbarSlot);
                         return false;
                     }
                     player.networkHandler.sendPacket(new UpdateSelectedSlotC2SPacket(hotbarSlot));
@@ -264,44 +325,6 @@ public class InventoryManager {
 
     public static boolean isInventorySlotInHotbar(int slot) {
         return slot >= 0 && slot <= 8;
-    }
-
-    static class PendingItemInfo {
-        int slot;
-        int ticks;
-        PendingItemInfo(int slot, int ticks) {
-            this.slot = slot;
-            this.ticks = ticks;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            PendingItemInfo that = (PendingItemInfo) o;
-
-            return slot == that.slot;
-        }
-    }
-
-    static class RequestedItemInfo {
-        Item item;
-        int ticks;
-        RequestedItemInfo(Item item, int ticks) {
-            this.item = item;
-            this.ticks = ticks;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            RequestedItemInfo that = (RequestedItemInfo) o;
-
-            return Objects.equals(item, that.item);
-        }
     }
 
     static class SlotInfo {

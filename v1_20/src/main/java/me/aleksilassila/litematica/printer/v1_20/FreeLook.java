@@ -6,8 +6,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
 
 public class FreeLook {
-    float cameraYaw;
-    float cameraPitch;
+    float cameraYaw = 0;
+    float cameraPitch = 0;
     Perspective prevPerspective = Perspective.FIRST_PERSON;
     MinecraftClient mc = MinecraftClient.getInstance();
     boolean enabled = false;
@@ -35,6 +35,7 @@ public class FreeLook {
             return;
         }
         this.enabled = true;
+        System.out.println("FreeLook: onEnable");
 
         cameraPitch = mc.player.getPitch();
         cameraYaw = mc.player.getYaw();
@@ -49,7 +50,8 @@ public class FreeLook {
 
     void onDisable() {
         this.enabled = false;
-        if (mc.options.getPerspective() != prevPerspective /*&& changePers.getValue()*/) mc.options.setPerspective(prevPerspective);
+        System.out.println("FreeLook: onDisable");
+        if (prevPerspective != null && mc.options.getPerspective() != prevPerspective /*&& changePers.getValue()*/) mc.options.setPerspective(prevPerspective);
     }
 
     public boolean isEnabled() {

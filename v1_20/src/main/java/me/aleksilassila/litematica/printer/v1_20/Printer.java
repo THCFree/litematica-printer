@@ -6,6 +6,7 @@ import fi.dy.masa.litematica.util.InventoryUtils;
 import fi.dy.masa.litematica.util.RayTraceUtils;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
+import fi.dy.masa.malilib.util.InfoUtils;
 import me.aleksilassila.litematica.printer.v1_20.actions.Action;
 import me.aleksilassila.litematica.printer.v1_20.actions.PrepareAction;
 import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
@@ -17,6 +18,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -53,21 +55,13 @@ public class Printer {
     }
 
     public void onMiddleClick() {
-        BlockPos pos;
-        boolean closest = false;
         if (mc.world == null || mc.player == null) return;
-        if (closest) {
-            pos = RayTraceUtils.getSchematicWorldTraceIfClosest(mc.world, mc.player, 6.0);
-        } else {
-            pos = RayTraceUtils.getFurthestSchematicWorldBlockBeforeVanilla(mc.world, mc.player, 6.0, true);
-        }
+        BlockPos pos = RayTraceUtils.getSchematicWorldTraceIfClosest(mc.world, mc.player, 6.0);
 
         if (pos != null) {
-            World world = SchematicWorldHandler.getSchematicWorld();
+            WorldSchematic world = SchematicWorldHandler.getSchematicWorld();
             if (world == null) return;
-            BlockState state = world.getBlockState(pos);
-            ItemStack stack = MaterialCache.getInstance().getRequiredBuildItemForState(state, world, pos);
-            InventoryUtils.schematicWorldPickBlock(stack, pos, world, mc);
+            inventoryManager.pickSlot(world, player, pos);
         }
     }
 
@@ -135,16 +129,13 @@ public class Printer {
                 if (guide.canExecute(player)) {
                     // System.out.println("Executing Guide:" + guide);
                     List<Action> actions = guide.execute(player);
-                    // System.out.println("Actions: " + actions);
-                    for (Action a : actions) {
-                        if (a instanceof PrepareAction) {
-                            // System.out.println("Preparing Action " + a);
-                        }
-                        if (a instanceof InteractActionImpl) {
-                            // System.out.println("Interacting Action " + a);
-                        }
-                    }
                     actionHandler.addActions(actions.toArray(Action[]::new));
+//                    actions.forEach((action) -> {
+//                        if (action instanceof InteractActionImpl a1) {
+//                            // InfoUtils.sendVanillaMessage(Text.literal("InteractActionImpl: " + a1));
+//                            mc.inGameHud.getChatHud().addMessage(Text.literal("InteractActionImpl: " + a1.context.getBlockPos()));
+//                        }
+//                    });
                     return true;
                 }
                 if (guide.skipOtherGuides()) continue findBlock;
