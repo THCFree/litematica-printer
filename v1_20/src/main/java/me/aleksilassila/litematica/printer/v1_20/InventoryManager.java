@@ -88,6 +88,9 @@ public class InventoryManager {
                 return true;
             }
             int slot = getBestInventorySlotWithItem(mc.player, new ItemStack(item));
+            if (slot == -1) {
+                return false;
+            }
             int nextSlot = nextHotbarSlot();
             hotbarSlots.get(nextSlot).addTicksLocked(10);
             hotbarSlots.get(nextSlot).waitingForItem = item;
