@@ -65,7 +65,7 @@ public class InventoryManager {
             SlotInfo info = hotbarSlots.get(i);
             info.ticksLocked = Math.max(0, info.ticksLocked - 1);
             if (info.ticksLocked == 0) {
-                if (info.waitingForItem != null && PrinterConfig.INVENTORY_NO_ASYNC.getBooleanValue()) {
+                if (info.waitingForItem != null && PrinterConfig.INVENTORY_NO_MULTI_ACTION.getBooleanValue()) {
                     delay = PrinterConfig.INVENTORY_DELAY.getIntegerValue();
                 }
                 info.waitingForItem = null;
@@ -78,7 +78,7 @@ public class InventoryManager {
         delay = Math.max(0, delay - 1);
 
         if (!pullQueue.isEmpty() && delay == 0 && mc.player != null && mc.interactionManager != null && mc.getNetworkHandler() != null) {
-            if (PrinterConfig.INVENTORY_NO_ASYNC.getBooleanValue()) {
+            if (PrinterConfig.INVENTORY_NO_MULTI_ACTION.getBooleanValue()) {
                 if (hotbarSlots.stream().anyMatch((info) -> info.ticksLocked > 0)) {
                     return false;
                 }

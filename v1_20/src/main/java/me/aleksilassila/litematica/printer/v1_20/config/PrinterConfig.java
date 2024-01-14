@@ -9,7 +9,6 @@ import fi.dy.masa.malilib.config.options.ConfigDouble;
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.event.InputEventHandler;
-import fi.dy.masa.malilib.hotkeys.KeyCallbackToggleBooleanConfigWithMessage;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 
 import javax.annotation.Nullable;
@@ -26,26 +25,26 @@ public class PrinterConfig {
         }
         return INSTANCE;
     }
-    public static final ConfigInteger TICK_DELAY = new ConfigInteger("printerTickDelay", 8, 0, 100, "Tick delay between actions. 0 = no delay.");
+    public static final ConfigInteger TICK_DELAY = new ConfigInteger("printerTickDelay", 0, 0, 100, "Tick delay between actions. 0 = no delay.");
     public static final ConfigInteger BLOCK_TIMEOUT = new ConfigInteger("printerBlockTimeout", 10, 0, 100, "How many ticks to wait before trying to place the same block again.");
-    public static final ConfigBoolean ROTATE_PLAYER = new ConfigBoolean("printerRotatePlayer", false, "Rotate the player to face the block to place.");
+    public static final ConfigBoolean ROTATE_PLAYER = new ConfigBoolean("printerRotatePlayer", true, "Rotate the player to face the block to place.");
     public static final ConfigBoolean SNAP_BACK = new ConfigBoolean("printerSnapBask", false, "Snap back to the view direction after placing a block.");
-    public static final ConfigBoolean STOP_ON_MOVEMENT = new ConfigBoolean("printerStopOnMovement", true, "Stop the printer if the player velocity is to high.");
+    public static final ConfigBoolean STOP_ON_MOVEMENT = new ConfigBoolean("printerStopOnMovement", false, "Stop the printer if the player velocity is to high.");
     public static final ConfigBoolean INTERPOLATE_LOOK = new ConfigBoolean("printerInterpolateLook", true, "Interpolate the player look direction packets.");
     public static final ConfigDouble INTERPOLATE_LOOK_MAX_ANGLE = new ConfigDouble("printerInterpolateLookMaxAngle", 10, "Interpolate the player look direction packets.");
     public static final ConfigBoolean LENIENT_STEALTH = new ConfigBoolean("printerLeaneantStealth", true, "Lenient stealth mode. Good enough for grim and offers better placement speed.");
-    public static final ConfigBoolean CARPET_MODE = new ConfigBoolean("printerCarpetMode", false, "Carpet mode. For placing carpets on the top of blocks.");
+    public static final ConfigBoolean CARPET_MODE = new ConfigBoolean("printerCarpetMode", true, "Carpet mode. For placing carpets on the top of blocks.");
     public static final ConfigInteger INACTIVE_SNAP_BACK = new ConfigInteger("printerInactiveSnapBack", 10, "Snap back to the view direction after placing a block.");
-    public static final ConfigInteger INVENTORY_DELAY = new ConfigInteger("printerInventoryDelay", 2, 0, 100, "The delay between each inventory action. 0 = no delay.");
-    public static final ConfigBoolean INVENTORY_NO_ASYNC = new ConfigBoolean("printerInventoryNoMultiAction", true, "Only allow one inventory action at a time.");
+    public static final ConfigInteger INVENTORY_DELAY = new ConfigInteger("printerInventoryDelay", 10, 0, 100, "The delay between each inventory action. 0 = no delay.");
+    public static final ConfigBoolean INVENTORY_NO_MULTI_ACTION = new ConfigBoolean("printerInventoryNoMultiAction", true, "Only allow one inventory action at a time.");
     public static final ConfigBoolean INVENTORY_PAUSE_PLACEMENT = new ConfigBoolean("printerInventoryPausePlacement", true, "Pause the printing process when the inventory is waiting on an action to finish.");
     public static final ConfigInteger INVENTORY_AFTER_EQUIP_USE_DELAY = new ConfigInteger("printerInventoryAfterEquipUseDelay", 10, 0, 100, "Delay on an item usage after it landed in the hotbar slot.");
     public static final ConfigBoolean RAYCAST = new ConfigBoolean("printerRaycast", true, "Raycast the block to place to check if it is visible.");
     public static final ConfigBoolean NO_PLACEMENT_CACHE = new ConfigBoolean("printerNoPlacementCache", false, "Disable the placement cache. This will make the printer slower but more accurate.");
     public static final ConfigBoolean RAYCAST_STRICT_BLOCK_HIT = new ConfigBoolean("printerRaycastStrictBlockHit", true, "Check if the right side of the block is hit.");
-    public static final ConfigBoolean PREVENT_DOUBLE_TAP_SPRINTING = new ConfigBoolean("printerPreventDoubleTapSprinting", true, "Prevent double tap sprinting when the printer is active.");
+    public static final ConfigBoolean PREVENT_DOUBLE_TAP_SPRINTING = new ConfigBoolean("printerPreventDoubleTapSprinting", false, "Prevent double tap sprinting when the printer is active.");
     public static final ConfigBoolean FREE_LOOK = new ConfigBoolean("printerFreeLook", false, "Free look mode. Allows you to look around while the printer is active.");
-    public static final ConfigHotkey FREE_LOOK_TOGGLE = new ConfigHotkey("printerFreeLook", "LEFT_ALT", KeybindSettings.MODIFIER_INGAME, "Free look mode. Allows you to look around while the printer is active.");
+    public static final ConfigHotkey FREE_LOOK_TOGGLE = new ConfigHotkey("printerFreeLook", "", KeybindSettings.MODIFIER_INGAME, "Free look mode. Allows you to look around while the printer is active.");
     public static final ConfigBoolean FREE_LOOK_THIRD_PERSON = new ConfigBoolean("printerFreeLookThirdPerson", true, "Free look mode. Allows you to look around while the printer is active.");
     public static final ConfigBoolean STRICT_BLOCK_FACE_CHECK = new ConfigBoolean("printerStrictBlockFaceCheck", true, "Places only against block faces that are facing the player.");
     public static final ConfigHotkey PRINTER_PICK_BLOCK = new ConfigHotkey("printerPickBlock", "MIDDLE_MOUSE", KeybindSettings.PRESS_ALLOWEXTRA_EMPTY, "Pick block while printer is active.");
@@ -58,7 +57,7 @@ public class PrinterConfig {
         list.add(STOP_ON_MOVEMENT);
         list.add(CARPET_MODE);
         list.add(INVENTORY_DELAY);
-        list.add(INVENTORY_NO_ASYNC);
+        list.add(INVENTORY_NO_MULTI_ACTION);
         list.add(INVENTORY_PAUSE_PLACEMENT);
         list.add(INVENTORY_AFTER_EQUIP_USE_DELAY);
         list.add(RAYCAST);
