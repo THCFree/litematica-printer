@@ -1,5 +1,6 @@
 package me.aleksilassila.litematica.printer.v1_20.guides.placement;
 
+import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import me.aleksilassila.litematica.printer.v1_20.SchematicBlockState;
 import net.minecraft.block.SlabBlock;
@@ -106,7 +107,7 @@ public class GeneralPlacementGuide extends PlacementGuide {
             if (validSide.isEmpty() || hitVec.isEmpty() || requiredItem.isEmpty() || requiredSlot == -1) return null;
 
             Optional<Direction> lookDirection = getLookDirection();
-            System.out.println("GeneralPlacementGuide#getPlacementContext lookDirection: " + lookDirection);
+            if (PrinterConfig.PRINTER_DEBUG_LOG.getBooleanValue()) System.out.println("GeneralPlacementGuide#getPlacementContext lookDirection: " + lookDirection);
             boolean requiresShift = getUseShift(state);
 
             BlockHitResult blockHitResult = new BlockHitResult(hitVec.get(), validSide.get().getOpposite(), state.blockPos.offset(validSide.get()), false);

@@ -173,7 +173,7 @@ public class PrepareAction extends Action {
                 float pitchDelta = targetRot[1] - lastRot[1];
                 if (PrinterConfig.INTERPOLATE_LOOK.getBooleanValue()) {
                     rotationDone = true;
-                    System.out.println("Yaw delta: " + yawDelta + ", pitch delta: " + pitchDelta);
+                    if (PrinterConfig.PRINTER_DEBUG_LOG.getBooleanValue()) System.out.println("Yaw delta: " + yawDelta + ", pitch delta: " + pitchDelta);
                     if (Math.abs(yawDelta) > maxDeltaYaw) {
                         lastRot[0] += clamp(yawDelta, (float) -maxDeltaYaw, (float) maxDeltaYaw);
                         rotationDone = false;
@@ -192,7 +192,7 @@ public class PrepareAction extends Action {
                     rotationDone = true;
                 }
 
-                System.out.println("Sending yaw for stealth 1: " + lastRot[0] + ", pitch: " + lastRot[1]);
+                if (PrinterConfig.PRINTER_DEBUG_LOG.getBooleanValue()) System.out.println("Sending yaw for stealth 1: " + lastRot[0] + ", pitch: " + lastRot[1]);
                 PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(lastRot[0], lastRot[1], player.isOnGround());
                 // PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), lastRot[0], lastRot[1], player.isOnGround());
 
@@ -226,7 +226,7 @@ public class PrepareAction extends Action {
             float yaw = modifyYaw ? this.yaw : player.getYaw();
             float pitch = modifyPitch ? this.pitch : player.getPitch();
 
-            System.out.println("Sending yaw for modified yaw: " + yaw + ", pitch: " + pitch);
+            if (PrinterConfig.PRINTER_DEBUG_LOG.getBooleanValue()) System.out.println("Sending yaw for modified yaw: " + yaw + ", pitch: " + pitch);
             PlayerMoveC2SPacket.LookAndOnGround packet = new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, player.isOnGround());
 
             player.networkHandler.sendPacket(packet);

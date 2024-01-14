@@ -22,7 +22,7 @@ public class FreeLook {
 
     private void setEnabled(ConfigBoolean configBoolean) {
         this.enabled = configBoolean.getBooleanValue();
-        System.out.println("FreeLook: " + enabled);
+        if (PrinterConfig.PRINTER_DEBUG_LOG.getBooleanValue()) System.out.println("FreeLook: " + enabled);
         if (enabled) {
             onEnable();
         } else {
@@ -35,7 +35,7 @@ public class FreeLook {
             return;
         }
         this.enabled = true;
-        System.out.println("FreeLook: onEnable");
+        if (PrinterConfig.PRINTER_DEBUG_LOG.getBooleanValue()) System.out.println("FreeLook: onEnable");
 
         cameraPitch = mc.player.getPitch();
         cameraYaw = mc.player.getYaw();
@@ -50,7 +50,7 @@ public class FreeLook {
 
     void onDisable() {
         this.enabled = false;
-        System.out.println("FreeLook: onDisable");
+        if (PrinterConfig.PRINTER_DEBUG_LOG.getBooleanValue()) System.out.println("FreeLook: onDisable");
         if (prevPerspective != null && mc.options.getPerspective() != prevPerspective /*&& changePers.getValue()*/) mc.options.setPerspective(prevPerspective);
     }
 

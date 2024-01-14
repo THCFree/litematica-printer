@@ -97,7 +97,7 @@ public class InventoryManager {
             // int currentHotbarSlot = mc.player.getInventory().selectedSlot;
             mc.player.getInventory().selectedSlot = nextSlot;
             mc.getNetworkHandler().sendPacket(new UpdateSelectedSlotC2SPacket(nextSlot));
-            System.out.println("Picking item from inventory: " + slot + " -> " + nextSlot);
+            if (PrinterConfig.PRINTER_DEBUG_LOG.getBooleanValue()) System.out.println("Picking item from inventory: " + slot + " -> " + nextSlot);
             mc.interactionManager.pickFromInventory(slot);
             delay += PrinterConfig.INVENTORY_DELAY.getIntegerValue();
             return true;
