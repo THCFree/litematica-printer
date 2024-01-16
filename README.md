@@ -34,14 +34,14 @@ found at the bottom of the page. You can also rebind the printing toggle under "
 default will also
 print regardless if the printer is toggled on or off.
 
-## Grim bypass
-Action for block placement:
-1. me.aleksilassila.litematica.printer.v1_20.Printer.onGameTick
-   - Check if printer is on
-   - Create an initial list of blocks within reach from the schematic world
-   - Loop through every block in that list
-     - Get a list of interaction Guids for that block and loop from them
-       - Get a list of actions from the guide me.aleksilassila.litematica.printer.v1_20.guides.Guide.execute
+## 2b2t Grim bypass
+This printer is Grim compatible if the `printerRotatePlayer` option is enabled in the printer settings. This option is enabled by default.
+
+I recommend to use the FreeLook option when printer as you will be able to look around while the player rotates to place blocks.
+To do this go to Litematica Settings > Generic > `printerFreeLookToggle` and set it to a keybind. Before printing press it to activate FreeLook. 
+There is also `printerFreeLookThirdPerson` which will auto switch to third person view when FreeLook is active.
+Both `togglePrintingMode` and `printerFreeLookToggle` can be set to the same keybind to activate them at the same time.
+The FreeLook is programmed to attempt to move you in the direction you are looking at even if the player is rotated. 
 
 ## Issues
 
