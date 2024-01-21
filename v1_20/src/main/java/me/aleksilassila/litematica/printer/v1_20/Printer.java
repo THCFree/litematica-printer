@@ -213,6 +213,12 @@ public class Printer {
         blockPosTimeout.add(new BlockTimeout(pos, PrinterConfig.BLOCK_TIMEOUT.getIntegerValue()));
     }
 
+    public void rotate(float v, float v1) {
+        LitematicaMixinMod.freeLook.ticksSinceLastRotation = 0;
+        this.player.setYaw(v);
+        this.player.setPitch(v1);
+    }
+
     public static class BlockTimeout {
         int timer = 0;
         BlockPos pos;

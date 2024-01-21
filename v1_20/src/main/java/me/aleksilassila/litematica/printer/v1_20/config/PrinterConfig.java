@@ -46,6 +46,8 @@ public class PrinterConfig {
     public static final ConfigBoolean FREE_LOOK = new ConfigBoolean("printerFreeLook", false, "Free look mode. Allows you to look around while the printer is active.");
     public static final ConfigHotkey FREE_LOOK_TOGGLE = new ConfigHotkey("printerFreeLookToggle", "", KeybindSettings.MODIFIER_INGAME, "Free look mode. Allows you to look around while the printer is active.");
     public static final ConfigBoolean FREE_LOOK_THIRD_PERSON = new ConfigBoolean("printerFreeLookThirdPerson", true, "Free look mode. Allows you to look around while the printer is active.");
+    public static final ConfigInteger FREE_LOOK_LOOK_BACK = new ConfigInteger("printerFreeLookLookBack", 2, 0, 100, "Time in ticks until the player character is rotated back to the camera view. 0 to disable.");
+    public static final ConfigBoolean FREE_LOOK_LOOK_BACK_ALWAYS_ROTATE_PLAYER = new ConfigBoolean("printerFreeLookLookBackAlwaysRotatePlayer", false, "Always rotate the player back to the camera view.\nMakes it more compatible with Baritone but is more intrusive and might cause other issues.");
     public static final ConfigBoolean STRICT_BLOCK_FACE_CHECK = new ConfigBoolean("printerStrictBlockFaceCheck", true, "Places only against block faces that are facing the player.");
     public static final ConfigHotkey PRINTER_PICK_BLOCK = new ConfigHotkey("printerPickBlock", "MIDDLE_MOUSE", KeybindSettings.PRESS_ALLOWEXTRA_EMPTY, "Pick block while printer is active.");
     public static final ConfigBoolean PRINTER_DEBUG_LOG = new ConfigBoolean("printerDebugLog", false, "Print debug messages to the console.");
@@ -68,6 +70,8 @@ public class PrinterConfig {
         list.add(FREE_LOOK_TOGGLE);
         list.add(STRICT_BLOCK_FACE_CHECK);
         list.add(FREE_LOOK_THIRD_PERSON);
+        list.add(FREE_LOOK_LOOK_BACK);
+        list.add(FREE_LOOK_LOOK_BACK_ALWAYS_ROTATE_PLAYER);
         list.add(PRINTER_PICK_BLOCK);
         list.add(PRINTER_DEBUG_LOG);
         return ImmutableList.copyOf(list);

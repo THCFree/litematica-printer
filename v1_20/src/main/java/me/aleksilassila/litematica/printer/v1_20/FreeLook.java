@@ -11,6 +11,7 @@ public class FreeLook {
     Perspective prevPerspective = Perspective.FIRST_PERSON;
     MinecraftClient mc = MinecraftClient.getInstance();
     boolean enabled = false;
+    int ticksSinceLastRotation = 0;
 
 //    BooleanSetting changePers = addBooleanSetting("Change Perspective",true);
 //    EnumSetting<Mode> cameraMode = addEnumSetting("Camera Mode",Mode.CAMERA);
@@ -18,6 +19,18 @@ public class FreeLook {
     public FreeLook() {
         enabled = PrinterConfig.FREE_LOOK.getBooleanValue();
         PrinterConfig.FREE_LOOK.setValueChangeCallback(this::setEnabled);
+    }
+
+    public void onGameTick() {
+        if (shouldRotate() && ((ticksSinceLastRotation -1) == PrinterConfig.FREE_LOOK_LOOK_BACK.getIntegerValue() || PrinterConfig.FREE_LOOK_LOOK_BACK_ALWAYS_ROTATE_PLAYER.getBooleanValue())) {
+            if (mc.player != null) {
+                // Reset player rotation. The mouse mixin only rotates the player by a delta. So without this the player
+                // rotation would be offset from the camera rotation.
+                mc.player.setYaw(cameraYaw);
+                mc.player.setPitch(cameraPitch);
+            }
+        }
+        ticksSinceLastRotation++;
     }
 
     private void setEnabled(ConfigBoolean configBoolean) {
@@ -56,6 +69,10 @@ public class FreeLook {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public boolean shouldRotate() {
+        return enabled && PrinterConfig.FREE_LOOK_LOOK_BACK.getIntegerValue() != 0 && ticksSinceLastRotation > PrinterConfig.FREE_LOOK_LOOK_BACK.getIntegerValue();
     }
 
     public float getCameraYaw() {

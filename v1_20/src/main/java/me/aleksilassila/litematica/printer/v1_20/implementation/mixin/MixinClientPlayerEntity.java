@@ -57,6 +57,7 @@ public class MixinClientPlayerEntity extends AbstractClientPlayerEntity {
         }
 
         LitematicaMixinMod.printer.onGameTick();
+        LitematicaMixinMod.freeLook.onGameTick();
     }
 
     @Inject(at = @At("HEAD"), method = "tick")

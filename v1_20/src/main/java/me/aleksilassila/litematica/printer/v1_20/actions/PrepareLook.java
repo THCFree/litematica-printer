@@ -179,8 +179,7 @@ public class PrepareLook extends Action {
                 PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), lastRot[0], lastRot[1], player.isOnGround());
 
                 if (PrinterConfig.ROTATE_PLAYER.getBooleanValue()) {
-                    player.setYaw(lastRot[0]);
-                    player.setPitch(lastRot[1]);
+                    LitematicaMixinMod.printer.rotate(lastRot[0], lastRot[1]);
                 }
                 packets.add(packet);
             }

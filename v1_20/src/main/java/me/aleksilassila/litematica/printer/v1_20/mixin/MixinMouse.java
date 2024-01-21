@@ -4,13 +4,11 @@ import me.aleksilassila.litematica.printer.v1_20.FreeLook;
 import me.aleksilassila.litematica.printer.v1_20.LitematicaMixinMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
-import net.minecraft.client.option.Perspective;
 import net.minecraft.util.math.MathHelper;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -40,12 +38,21 @@ public class MixinMouse {
             if (this.client.options.getInvertYMouse().getValue()) {
                 m = -1;
             }
-            freeLook.setCameraYaw((float) (freeLook.getCameraYaw() + k * 0.15F));
+            float yaw = (float) (freeLook.getCameraYaw() + k * 0.15F);
+            freeLook.setCameraYaw(yaw);
             float pitch = MathHelper.clamp((float) (freeLook.getCameraPitch() + (l * (double) m) * 0.15F), -90.0F, 90.0F);
             freeLook.setCameraPitch(pitch);
-            if (Math.abs(freeLook.getCameraPitch()) > 90.0F) freeLook.setCameraYaw(freeLook.getCameraPitch() > 0.0F ? 90.0F : -90.0F);
+            if (Math.abs(pitch) > 90.0F) {
+                yaw = pitch > 0.0F ? 90.0F : -90.0F;
+                freeLook.setCameraYaw(yaw);
+            }
             cursorDeltaX = 0.0;
             cursorDeltaY = 0.0;
+            if (freeLook.shouldRotate()) {
+                if (this.client.player != null) {
+                    this.client.player.changeLookDirection(k, l * (double)m);
+                }
+            }
             ci.cancel();
         }
     }
