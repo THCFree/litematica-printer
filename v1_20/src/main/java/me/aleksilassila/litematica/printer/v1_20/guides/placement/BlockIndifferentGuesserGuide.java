@@ -37,6 +37,10 @@ public class BlockIndifferentGuesserGuide extends GuesserGuide {
                     TripwireBlock.EAST, TripwireBlock.SOUTH, TripwireBlock.WEST);
         }
 
+        if (targetBlock instanceof MushroomBlock) {
+            return statesEqualIgnoreProperties(resultState, targetState, MushroomBlock.DOWN, MushroomBlock.UP, MushroomBlock.WEST, MushroomBlock.NORTH, MushroomBlock.EAST, MushroomBlock.SOUTH);
+        }
+
         return super.statesEqual(resultState, targetState);
     }
 }
