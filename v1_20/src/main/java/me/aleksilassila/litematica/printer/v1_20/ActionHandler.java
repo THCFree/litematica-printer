@@ -1,6 +1,7 @@
 package me.aleksilassila.litematica.printer.v1_20;
 
 import me.aleksilassila.litematica.printer.v1_20.actions.Action;
+import me.aleksilassila.litematica.printer.v1_20.actions.ActionChain;
 import me.aleksilassila.litematica.printer.v1_20.actions.PrepareAction;
 import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import net.minecraft.client.MinecraftClient;
@@ -41,10 +42,6 @@ public class ActionHandler {
                 // System.out.println("Sending action " + nextAction);
                 nextAction.send(client, player);
                 Printer.inactivityCounter = 0;
-                if (!nextAction.isSync) {
-                    actionTaken = true;
-                    tick++;
-                }
             } else {
                 lookAction = null;
                 tick++;
@@ -72,5 +69,13 @@ public class ActionHandler {
         }
 
         actionQueue.addAll(List.of(actions));
+    }
+
+    public void addActions(ActionChain... actionChains) {
+        if (!acceptsActions()) return;
+
+        for (ActionChain actionChain : actionChains) {
+            actionQueue.addAll(actionChain.getActions());
+        }
     }
 }

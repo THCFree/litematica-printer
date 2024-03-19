@@ -1,7 +1,6 @@
 package me.aleksilassila.litematica.printer.v1_20.actions;
 
 import me.aleksilassila.litematica.printer.v1_20.LitematicaMixinMod;
-import me.aleksilassila.litematica.printer.v1_20.Printer;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -14,7 +13,6 @@ abstract public class InteractAction extends Action {
 
     public InteractAction(PrinterPlacementContext context) {
         this.context = context;
-        isSync = false;
     }
 
     protected abstract ActionResult interact(MinecraftClient client, ClientPlayerEntity player, Hand hand, BlockHitResult hitResult);

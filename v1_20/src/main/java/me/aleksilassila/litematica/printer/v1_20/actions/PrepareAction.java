@@ -61,7 +61,6 @@ public class PrepareAction extends Action {
         } else {
             this.modifyPitch = false;
         }
-        isSync = true;
     }
 
     public PrepareAction(PrinterPlacementContext context, float yaw, float pitch) {
@@ -131,28 +130,6 @@ public class PrepareAction extends Action {
                 }
             }
         }
-
-//        if (context.canStealth) {
-//            float[] targetRot = getNeededRotations(player, context.getHitPos());
-//            System.out.println("Sending yaw for stealth 1: " + targetRot[0] + ", pitch: " + targetRot[1]);
-//            PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), targetRot[0], targetRot[1], player.isOnGround());
-//
-//            this.yaw = targetRot[0];
-//            this.pitch = targetRot[1];
-//            if (PrinterConfig.DEBUG_MODE.getBooleanValue()) {
-//                player.setYaw(targetRot[0]);
-//                player.setPitch(targetRot[1]);
-//            }
-//            player.networkHandler.sendPacket(packet);
-//        } else if (modifyPitch || modifyYaw) {
-//            float yaw = modifyYaw ? this.yaw : player.getYaw();
-//            float pitch = modifyPitch ? this.pitch : player.getPitch();
-//
-//            System.out.println("Sending yaw for modified yaw: " + yaw + ", pitch: " + pitch);
-//            PlayerMoveC2SPacket packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), yaw, pitch, player.isOnGround());
-//
-//            player.networkHandler.sendPacket(packet);
-//        }
 
         if (context.canStealth) {
             ArrayList<PlayerMoveC2SPacket.LookAndOnGround> packets = new ArrayList<>();

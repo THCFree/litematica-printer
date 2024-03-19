@@ -3,12 +3,12 @@ package me.aleksilassila.litematica.printer.v1_20.guides.placement;
 import me.aleksilassila.litematica.printer.v1_20.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.v1_20.Printer;
 import me.aleksilassila.litematica.printer.v1_20.actions.*;
-import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import me.aleksilassila.litematica.printer.v1_20.SchematicBlockState;
 import me.aleksilassila.litematica.printer.v1_20.guides.Guide;
 import me.aleksilassila.litematica.printer.v1_20.implementation.actions.InteractActionImpl;
 import net.minecraft.block.*;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
@@ -30,6 +30,7 @@ import java.util.Optional;
  * Guide that clicks its neighbors to create a placement in target position.
  */
 abstract public class PlacementGuide extends Guide {
+    MinecraftClient mc = MinecraftClient.getInstance();
     public PlacementGuide(SchematicBlockState state) {
         super(state);
     }
@@ -93,13 +94,14 @@ abstract public class PlacementGuide extends Guide {
         PrinterPlacementContext ctx = getPlacementContext(player);
 
         if (ctx == null) return actions;
-        // System.out.println("Adding prepare action from ctx:" + ctx + this.getClass());
-        // actions.add(new PrepareAction(ctx));
-        actions.add(new PrepareLook(ctx));
-        actions.add(new InteractActionImpl(ctx));
-        if (ctx.shouldSneak) actions.add(new ReleaseShiftAction());
+        ActionChain actionChain = new ActionChain();
+
+        actionChain.addAction(new PrepareLook(ctx));
+        if (ctx.shouldSneak) actionChain.addAction(new PresShift());
+        actionChain.addAction(new InteractActionImpl(ctx));
+        if (ctx.shouldSneak) actionChain.addAction(new ReleaseShiftAction());
+        actions.add(actionChain);
         Printer.addTimeout(ctx.getBlockPos());
-        // if (PrinterConfig.SNAP_BASK.getBooleanValue()) actions.add(new PostAction(ctx, player));
 
         return actions;
     }

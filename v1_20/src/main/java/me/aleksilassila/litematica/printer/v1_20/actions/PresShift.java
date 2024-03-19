@@ -4,10 +4,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
 
-public class ReleaseShiftAction extends Action {
+public class PresShift extends Action {
     @Override
     public void send(MinecraftClient client, ClientPlayerEntity player) {
-        player.input.sneaking = false;
-        player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
+        player.input.sneaking = true;
+        player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY));
     }
 }

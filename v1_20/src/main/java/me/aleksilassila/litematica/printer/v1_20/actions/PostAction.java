@@ -12,7 +12,6 @@ public class PostAction extends PrepareAction {
         super(context);
         this.pitch = player.getPitch();
         this.yaw = player.getYaw();
-        this.isSync = true;
     }
 
     @Override

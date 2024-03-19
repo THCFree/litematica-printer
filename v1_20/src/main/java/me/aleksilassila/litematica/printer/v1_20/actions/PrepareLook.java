@@ -96,46 +96,6 @@ public class PrepareLook extends Action {
         if (!Printer.inventoryManager.select(itemStack)) {
             return;
         }
-//        int slot = InventoryManager.getSlotWithItem(player, context.getStack());
-//
-//        if (itemStack != null) {
-//            PlayerInventory inventory = player.getInventory();
-//
-//            // This thing is straight from MinecraftClient#doItemPick()
-//            if (player.getAbilities().creativeMode) {
-//                inventory.addPickBlock(itemStack);
-//                client.interactionManager.clickCreativeStack(player.getStackInHand(Hand.MAIN_HAND), 36 + inventory.selectedSlot);
-//            } else if (slot != -1) {
-//                if (PlayerInventory.isValidHotbarIndex(slot) && InventoryManager.getInstance().isSlotFree(slot)) {
-//                    inventory.selectedSlot = slot;
-//                } else {
-//                    InventoryManager.getInstance().requestStack(context.getStack());
-//                    return;
-//                }
-//            }
-//        }
-
-//        if (context.canStealth) {
-//            float[] targetRot = getNeededRotations(player, context.getHitPos());
-//            System.out.println("Sending yaw for stealth 1: " + targetRot[0] + ", pitch: " + targetRot[1]);
-//            PlayerMoveC2SPacket.Full packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), targetRot[0], targetRot[1], player.isOnGround());
-//
-//            this.yaw = targetRot[0];
-//            this.pitch = targetRot[1];
-//            if (PrinterConfig.DEBUG_MODE.getBooleanValue()) {
-//                player.setYaw(targetRot[0]);
-//                player.setPitch(targetRot[1]);
-//            }
-//            player.networkHandler.sendPacket(packet);
-//        } else if (modifyPitch || modifyYaw) {
-//            float yaw = modifyYaw ? this.yaw : player.getYaw();
-//            float pitch = modifyPitch ? this.pitch : player.getPitch();
-//
-//            System.out.println("Sending yaw for modified yaw: " + yaw + ", pitch: " + pitch);
-//            PlayerMoveC2SPacket packet = new PlayerMoveC2SPacket.Full(player.getX(), player.getY(), player.getZ(), yaw, pitch, player.isOnGround());
-//
-//            player.networkHandler.sendPacket(packet);
-//        }
 
         if (context.canStealth) {
             ArrayList<PlayerMoveC2SPacket.Full> packets = new ArrayList<>();
@@ -211,15 +171,6 @@ public class PrepareLook extends Action {
             this.pitch = Optional.of(pitch);
             player.networkHandler.sendPacket(packet);
         }
-
-        if (context.shouldSneak) {
-            player.input.sneaking = true;
-            player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.PRESS_SHIFT_KEY));
-        } else {
-            player.input.sneaking = false;
-            player.networkHandler.sendPacket(new ClientCommandC2SPacket(player, ClientCommandC2SPacket.Mode.RELEASE_SHIFT_KEY));
-        }
-        isSync = true;
     }
 
     @Override

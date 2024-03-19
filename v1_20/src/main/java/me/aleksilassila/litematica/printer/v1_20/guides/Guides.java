@@ -3,8 +3,6 @@ package me.aleksilassila.litematica.printer.v1_20.guides;
 import me.aleksilassila.litematica.printer.v1_20.SchematicBlockState;
 import me.aleksilassila.litematica.printer.v1_20.guides.interaction.*;
 import me.aleksilassila.litematica.printer.v1_20.guides.placement.*;
-import me.aleksilassila.litematica.printer.v1_20.guides.interaction.*;
-import me.aleksilassila.litematica.printer.v1_20.guides.placement.*;
 import net.minecraft.block.*;
 import net.minecraft.util.Pair;
 
@@ -22,6 +20,7 @@ public class Guides {
 //        registerGuide(SkipGuide.class, AbstractSignBlock.class, SkullBlock.class, BannerBlock.class);
 
         registerGuide(RotatingBlockGuide.class, AbstractSkullBlock.class, AbstractSignBlock.class, AbstractBannerBlock.class);
+        registerGuide(FacingBlockGuide.class, StairsBlock.class);
         registerGuide(SlabGuide.class, SlabBlock.class);
         registerGuide(TorchGuide.class, TorchBlock.class);
         registerGuide(FarmlandGuide.class, FarmlandBlock.class);
@@ -39,7 +38,7 @@ public class Guides {
                 NoteBlock.class, CampfireBlock.class, PoweredRailBlock.class, LeavesBlock.class, TripwireHookBlock.class);
         registerGuide(FallingBlockGuide.class, FallingBlock.class);
         registerGuide(BlockIndifferentGuesserGuide.class, BambooBlock.class, BigDripleafStemBlock.class, BigDripleafBlock.class,
-                TwistingVinesPlantBlock.class, TripwireBlock.class);
+                TwistingVinesPlantBlock.class, TripwireBlock.class, MushroomBlock.class);
 
         registerGuide(CampfireExtinguishGuide.class, CampfireBlock.class);
         registerGuide(LightCandleGuide.class, AbstractCandleBlock.class);

@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-public class TorchGuide extends GeneralPlacementGuide {
+public class TorchGuide extends GuesserGuide {
     public TorchGuide(SchematicBlockState state) {
         super(state);
     }

@@ -1,5 +1,6 @@
 package me.aleksilassila.litematica.printer.v1_20.guides.interaction;
 
+import me.aleksilassila.litematica.printer.v1_20.actions.ActionChain;
 import me.aleksilassila.litematica.printer.v1_20.implementation.PrinterPlacementContext;
 import me.aleksilassila.litematica.printer.v1_20.SchematicBlockState;
 import me.aleksilassila.litematica.printer.v1_20.actions.Action;
@@ -37,9 +38,13 @@ public abstract class InteractionGuide extends Guide {
 
         PrinterPlacementContext ctx = new PrinterPlacementContext(player, hitResult, requiredItem, requiredSlot);
 
-        actions.add(new ReleaseShiftAction());
-        actions.add(new PrepareAction(ctx));
-        actions.add(new InteractActionImpl(ctx));
+        ActionChain chain = new ActionChain();
+
+        chain.addAction(new ReleaseShiftAction());
+        chain.addAction(new PrepareAction(ctx));
+        chain.addAction(new InteractActionImpl(ctx));
+
+        actions.add(chain);
 
         return actions;
     }

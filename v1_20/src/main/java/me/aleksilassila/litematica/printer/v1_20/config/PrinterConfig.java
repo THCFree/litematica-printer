@@ -39,9 +39,9 @@ public class PrinterConfig {
     public static final ConfigBoolean INVENTORY_NO_MULTI_ACTION = new ConfigBoolean("printerInventoryNoMultiAction", true, "Only allow one inventory action at a time.");
     public static final ConfigBoolean INVENTORY_PAUSE_PLACEMENT = new ConfigBoolean("printerInventoryPausePlacement", true, "Pause the printing process when the inventory is waiting on an action to finish.");
     public static final ConfigInteger INVENTORY_AFTER_EQUIP_USE_DELAY = new ConfigInteger("printerInventoryAfterEquipUseDelay", 10, 0, 100, "Delay on an item usage after it landed in the hotbar slot.");
-    public static final ConfigBoolean RAYCAST = new ConfigBoolean("printerRaycast", true, "Raycast the block to place to check if it is visible.");
+    public static final ConfigBoolean RAYCAST = new ConfigBoolean("printerRaycast", false, "Raycast the block to place to check if it is visible.");
     public static final ConfigBoolean NO_PLACEMENT_CACHE = new ConfigBoolean("printerNoPlacementCache", false, "Disable the placement cache. This will make the printer slower but more accurate.");
-    public static final ConfigBoolean RAYCAST_STRICT_BLOCK_HIT = new ConfigBoolean("printerRaycastStrictBlockHit", true, "Check if the right side of the block is hit.");
+    public static final ConfigBoolean RAYCAST_STRICT_BLOCK_HIT = new ConfigBoolean("printerRaycastStrictBlockHit", false, "Check if the right side of the block is hit.");
     public static final ConfigBoolean PREVENT_DOUBLE_TAP_SPRINTING = new ConfigBoolean("printerPreventDoubleTapSprinting", false, "Prevent double tap sprinting when the printer is active.");
     public static final ConfigBoolean FREE_LOOK = new ConfigBoolean("printerFreeLook", false, "Free look mode. Allows you to look around while the printer is active.");
     public static final ConfigHotkey FREE_LOOK_TOGGLE = new ConfigHotkey("printerFreeLookToggle", "", KeybindSettings.MODIFIER_INGAME, "Free look mode. Allows you to look around while the printer is active.");
@@ -51,6 +51,7 @@ public class PrinterConfig {
     public static final ConfigBoolean STRICT_BLOCK_FACE_CHECK = new ConfigBoolean("printerStrictBlockFaceCheck", true, "Places only against block faces that are facing the player.");
     public static final ConfigHotkey PRINTER_PICK_BLOCK = new ConfigHotkey("printerPickBlock", "MIDDLE_MOUSE", KeybindSettings.PRESS_ALLOWEXTRA_EMPTY, "Pick block while printer is active.");
     public static final ConfigBoolean PRINTER_DEBUG_LOG = new ConfigBoolean("printerDebugLog", false, "Print debug messages to the console.");
+    public static final ConfigBoolean PRINTER_IGNORE_ROTATION = new ConfigBoolean("printerIgnoreRotation", false, "Ignore the block rotation when placing.");
     public ImmutableList<IConfigBase> getOptions() {
         List<IConfigBase> list = new java.util.ArrayList<>(Configs.Generic.OPTIONS);
         list.add(TICK_DELAY);
@@ -74,6 +75,7 @@ public class PrinterConfig {
         list.add(FREE_LOOK_LOOK_BACK_ALWAYS_ROTATE_PLAYER);
         list.add(PRINTER_PICK_BLOCK);
         list.add(PRINTER_DEBUG_LOG);
+        list.add(PRINTER_IGNORE_ROTATION);
         return ImmutableList.copyOf(list);
     }
 

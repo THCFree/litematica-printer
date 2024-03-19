@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.Perspective;
 
 public class FreeLook {
+    static FreeLook INSTANCE = null;
     float cameraYaw = 0;
     float cameraPitch = 0;
     Perspective prevPerspective = Perspective.FIRST_PERSON;
@@ -16,9 +17,16 @@ public class FreeLook {
 //    BooleanSetting changePers = addBooleanSetting("Change Perspective",true);
 //    EnumSetting<Mode> cameraMode = addEnumSetting("Camera Mode",Mode.CAMERA);
 //    FloatSetting sensitivity = addFloatSetting("Sensitivity",8,0,10);
-    public FreeLook() {
+    private FreeLook() {
         enabled = PrinterConfig.FREE_LOOK.getBooleanValue();
         PrinterConfig.FREE_LOOK.setValueChangeCallback(this::setEnabled);
+    }
+
+    public static FreeLook getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new FreeLook();
+        }
+        return INSTANCE;
     }
 
     public void onGameTick() {
