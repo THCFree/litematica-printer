@@ -52,6 +52,7 @@ public class PrinterConfig {
     public static final ConfigHotkey PRINTER_PICK_BLOCK = new ConfigHotkey("printerPickBlock", "MIDDLE_MOUSE", KeybindSettings.PRESS_ALLOWEXTRA_EMPTY, "Pick block while printer is active.");
     public static final ConfigBoolean PRINTER_DEBUG_LOG = new ConfigBoolean("printerDebugLog", false, "Print debug messages to the console.");
     public static final ConfigBoolean PRINTER_IGNORE_ROTATION = new ConfigBoolean("printerIgnoreRotation", false, "Ignore the block rotation when placing.");
+    public static final ConfigBoolean PRINTER_ALLOW_NONE_EXACT_STATES = new ConfigBoolean("printerAllowNoneExactStates", false, "Allow none exact block states to be placed.\nThis includes things like lichen, muchroom stems, etc.");
     public ImmutableList<IConfigBase> getOptions() {
         List<IConfigBase> list = new java.util.ArrayList<>(Configs.Generic.OPTIONS);
         list.add(TICK_DELAY);
@@ -76,6 +77,7 @@ public class PrinterConfig {
         list.add(PRINTER_PICK_BLOCK);
         list.add(PRINTER_DEBUG_LOG);
         list.add(PRINTER_IGNORE_ROTATION);
+        list.add(PRINTER_ALLOW_NONE_EXACT_STATES);
         return ImmutableList.copyOf(list);
     }
 

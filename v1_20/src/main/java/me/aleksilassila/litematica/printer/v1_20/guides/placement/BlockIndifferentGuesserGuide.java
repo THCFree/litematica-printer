@@ -1,6 +1,7 @@
 package me.aleksilassila.litematica.printer.v1_20.guides.placement;
 
 import me.aleksilassila.litematica.printer.v1_20.SchematicBlockState;
+import me.aleksilassila.litematica.printer.v1_20.config.PrinterConfig;
 import net.minecraft.block.*;
 
 public class BlockIndifferentGuesserGuide extends GuesserGuide {
@@ -39,6 +40,10 @@ public class BlockIndifferentGuesserGuide extends GuesserGuide {
 
         if (targetBlock instanceof MushroomBlock) {
             return statesEqualIgnoreProperties(resultState, targetState, MushroomBlock.DOWN, MushroomBlock.UP, MushroomBlock.WEST, MushroomBlock.NORTH, MushroomBlock.EAST, MushroomBlock.SOUTH);
+        }
+
+        if (targetBlock instanceof GlowLichenBlock && PrinterConfig.PRINTER_ALLOW_NONE_EXACT_STATES.getBooleanValue()) {
+            return resultState.getBlock() == targetState.getBlock();
         }
 
         return super.statesEqual(resultState, targetState);
