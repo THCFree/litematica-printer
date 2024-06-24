@@ -1,7 +1,6 @@
 import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
-    id("fabric-loom").version("1.7-SNAPSHOT")
     id("maven-publish")
 }
 
