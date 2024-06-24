@@ -5,7 +5,7 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/aleksilassila/litematica-printer/total)
 ![GitHub Repo stars](https://img.shields.io/github/stars/aleksilassila/litematica-printer)
 
-This extension adds printing functionality for [Litematica fabric](https://github.com/maruohon/litematica) 1.19, 1.18
+This extension adds printing functionality for [Litematica fabric](https://github.com/maruohon/litematica) 1.21, 1.20.4, 1.20.0 ,1.19, 1.18
 and
 1.17 versions. Printer allows players to build
 big structures more quickly by automatically placing the correct blocks around you.
@@ -15,7 +15,7 @@ big structures more quickly by automatically placing the correct blocks around y
 ## Warning Minecraft Version 1.21
 Since there is no official release of Litematica for 1.21, the printer uses a update fork of it and MaliLib. <br>
 This fork is not official and may contain bugs or issues. If you encounter any issues with the printer, please report them to the fork's repository.<br>
-This fork is not guaranteed secure as is isn't an official release.<br>
+This fork is not guaranteed secure as it isn't an official release.<br>
 1.21 Litematica repository: [Litematica](https://github.com/sakura-ryoko/litematica)<br>
 1.21 MaliLib repository: [MaliLib](https://github.com/sakura-ryoko/malilib)<br>
 USE AT YOUR OWN RISK
