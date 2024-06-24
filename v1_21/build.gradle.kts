@@ -1,19 +1,19 @@
 plugins {
-    id("fabric-loom").version("1.6-SNAPSHOT")
+    id("fabric-loom").version("1.7-SNAPSHOT")
     id("maven-publish")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-java.targetCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
+java.targetCompatibility = JavaVersion.VERSION_21
 
 val archives_base_name: String by project
 val minecraft_version: String by project
 val yarn_mappings: String by project
 val loader_version: String by project
 val fabric_version: String by project
-val malilib_version: String by project
-val litematica_projectid: String by project
-val litematica_fileid: String by project
+//val malilib_version: String by project
+//val litematica_projectid: String by project
+//val litematica_fileid: String by project
 
 val mod_version: String by project
 
