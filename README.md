@@ -12,6 +12,14 @@ big structures more quickly by automatically placing the correct blocks around y
 
 ![Demo](printer_demo.gif)
 
+## Warning Minecraft Version 1.21
+Since there is no official release of Litematica for 1.21, the printer uses a update fork of it and MaliLib. <br>
+This fork is not official and may contain bugs or issues. If you encounter any issues with the printer, please report them to the fork's repository.<br>
+This fork is not guaranteed secure as is isn't an official release.<br>
+1.21 Litematica repository: [Litematica](https://github.com/sakura-ryoko/litematica)<br>
+1.21 MaliLib repository: [MaliLib](https://github.com/sakura-ryoko/malilib)<br>
+USE AT YOUR OWN RISK
+
 ## Installation
 
 1. Download and install [Fabric](https://fabricmc.net/use/installer/) if you haven't already.
