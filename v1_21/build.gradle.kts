@@ -1,3 +1,5 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id("fabric-loom").version("1.7-SNAPSHOT")
     id("maven-publish")
@@ -46,6 +48,7 @@ tasks.withType<ProcessResources> {
         expand(mapOf("version" to mod_version))
     }
 }
+
 
 val sourceModule = "v1_19_4"
 val targetModules = arrayOf("v1_19", "v1_18", "v1_17")

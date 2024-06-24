@@ -20,10 +20,10 @@ jobs:
           distribution: 'temurin'
           java-version: 21
       - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
+        run: chmod +x v1.21/gradlew
 
       - name: build 1.21
-        run: ./gradlew :v1_21:build
+        run: v1_21/gradlew build
 
       - name: capture build artifacts
         uses: actions/upload-artifact@v2
