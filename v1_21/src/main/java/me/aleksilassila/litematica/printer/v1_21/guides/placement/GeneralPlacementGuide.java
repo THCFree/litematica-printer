@@ -289,8 +289,26 @@ public class GeneralPlacementGuide extends PlacementGuide {
             }
         // }
 
+            if(PrinterConfig.PRINTER_AIRPLACE.getBooleanValue()){
+
+                Vec3d hitVec = Vec3d.ofCenter(state.blockPos);
+                BlockHitResult hitResult = new BlockHitResult(hitVec, Direction.UP, state.blockPos, false);
+                PrinterPlacementContext context = new PrinterPlacementContext(player, hitResult, requiredItem, slot, Direction.UP, false);
+                context.canStealth = true;
+                context.isRaytrace = false;
+                BlockState result = getRequiredItemAsBlock(player)
+                        .orElse(targetState.getBlock())
+                        .getPlacementState(context);
+
+                if (result != null && (statesEqual(result, targetState))) {
+                    contextCache = context;
+                    return context;
+                }
+            }
+
         return null;
     }
+
 
     private boolean correctChestPlacement(BlockState targetState, BlockState result) {
         if (targetState.contains(ChestBlock.CHEST_TYPE) && result.contains(ChestBlock.CHEST_TYPE) && result.get(ChestBlock.FACING) == targetState.get(ChestBlock.FACING)) {

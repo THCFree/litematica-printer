@@ -204,93 +204,111 @@ public class GeneralPlacementGuide extends PlacementGuide {
         // Direction relativeRotation = Direction.getEntityFacingOrder(player)[0];
 
         // for (Direction lookDirection : directionsToTry) {
-            for (Direction side : getPossibleSides()) {
-                BlockPos neighborPos = state.blockPos.offset(side);
+        for (Direction side : getPossibleSides()) {
+            BlockPos neighborPos = state.blockPos.offset(side);
 
-                // Check if the block face is visible. Prevents the printer from trying to place blocks on the backside of other blocks
-                if (PrinterConfig.STRICT_BLOCK_FACE_CHECK.getBooleanValue()) {
-                    if (!canSeeBlockFace(player, new BlockHitResult(Vec3d.ofCenter(state.blockPos), side.getOpposite(), neighborPos, false))) {
-                        continue;
-                    }
-                }
-
-                BlockState neighborState = state.world.getBlockState(neighborPos);
-                boolean requiresShift = getRequiresExplicitShift() || isInteractive(neighborState.getBlock());
-
-                if (!canBeClicked(state.world, neighborPos) || // Handle unclickable grass for example
-                        neighborState.isReplaceable())
+            // Check if the block face is visible. Prevents the printer from trying to place blocks on the backside of other blocks
+            if (PrinterConfig.STRICT_BLOCK_FACE_CHECK.getBooleanValue()) {
+                if (!canSeeBlockFace(player, new BlockHitResult(Vec3d.ofCenter(state.blockPos), side.getOpposite(), neighborPos, false))) {
                     continue;
-
-                Vec3d hitVec = Vec3d.ofCenter(state.blockPos)
-                        .add(Vec3d.of(side.getVector()).multiply(0.5)); // Center of the block side face we are placing on
-
-                // Now we bring on the big guns, brute force the hit vector until we find a solution that directly hits the neighbor block without obstruction
-                for (Vec3d hitVecToTry : hitVecsToTryArray) {
-                    Vec3d multiplier = Vec3d.of(side.getVector());
-                    multiplier = new Vec3d(
-                            multiplier.x == 0 ? 1 : 0,
-                            multiplier.y == 0 ? 1 : 0,
-                            multiplier.z == 0 ? 1 : 0); // Offset from the Center of the block side face we are placing on by pre calculated values. This samples different points on that face.
-
-                    Vec3d blockHit = hitVec.add(hitVecToTry.multiply(multiplier));
-                    Vec3d lookDirection = blockHit.subtract(playerEyePos).normalize();
-                    Direction relativeDirection = Direction.getFacing(lookDirection.x, lookDirection.y, lookDirection.z);
-
-                    if (playerEyePos.distanceTo(blockHit) > LitematicaMixinMod.PRINTING_RANGE.getDoubleValue()) // Check if the hit vector is in range
-                        continue;
-
-                    if (PrinterConfig.RAYCAST.getBooleanValue() && mc.world != null && mc.player != null) {
-                        Vec3d lookVec = blockHit.subtract(playerEyePos).normalize(); // Look vector from the player's eye to the block hit vector
-                        Vec3d raycastEnd = playerEyePos.add(lookVec.multiply(5)); // 5 block max distance
-                        RaycastContext raycastContext = new RaycastContext(playerEyePos, raycastEnd, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player);
-                        BlockHitResult result = mc.world.raycast(raycastContext);
-                        if (result.getType() != HitResult.Type.BLOCK) { // If we didn't hit a block, skip
-                            continue;
-                        }
-
-                        if (result.getBlockPos().equals(neighborPos)) {
-                            if (PrinterConfig.RAYCAST_STRICT_BLOCK_HIT.getBooleanValue()) { // Check if the right side was hit
-                                Direction hitSide = result.getSide();
-                                if (hitSide.getOpposite() != side) {
-                                    continue;
-                                }
-                            }
-                            if (result.getPos().distanceTo(playerEyePos) > LitematicaMixinMod.PRINTING_RANGE.getDoubleValue()) { // Check if the hit result is in range
-                                continue;
-                            }
-                            BlockHitResult hitResult = new BlockHitResult(blockHit, side.getOpposite(), neighborPos, false);
-                            PrinterPlacementContext rayTraceContext = new PrinterPlacementContext(player, hitResult, requiredItem, slot, relativeDirection, requiresShift);
-                            rayTraceContext.canStealth = true;
-                            rayTraceContext.isRaytrace = true;
-                            BlockState resultState = getRequiredItemAsBlock(player)
-                                    .orElse(targetState.getBlock())
-                                    .getPlacementState(rayTraceContext);
-
-                            if (resultState != null && (statesEqual(resultState, targetState) || correctChestPlacement(targetState, resultState))) {
-                                contextCache = rayTraceContext;
-                                return rayTraceContext;
-                            }
-                        }
-                        continue;
-                    }
-
-                    BlockHitResult hitResult = new BlockHitResult(blockHit, side.getOpposite(), neighborPos, false);
-                    PrinterPlacementContext context = new PrinterPlacementContext(player, hitResult, requiredItem, slot, relativeDirection, requiresShift);
-                    context.canStealth = true;
-                    BlockState result = getRequiredItemAsBlock(player)
-                            .orElse(targetState.getBlock())
-                            .getPlacementState(context); // FIXME torch shift clicks another torch and getPlacementState is the clicked block, which is true
-
-                    if (result != null && (statesEqual(result, targetState) || correctChestPlacement(targetState, result))) {
-                        contextCache = context;
-                        return context;
-                    }
                 }
             }
+
+            BlockState neighborState = state.world.getBlockState(neighborPos);
+            boolean requiresShift = getRequiresExplicitShift() || isInteractive(neighborState.getBlock());
+
+            if (!canBeClicked(state.world, neighborPos) || // Handle unclickable grass for example
+                    neighborState.isReplaceable())
+                continue;
+
+            Vec3d hitVec = Vec3d.ofCenter(state.blockPos)
+                    .add(Vec3d.of(side.getVector()).multiply(0.5)); // Center of the block side face we are placing on
+
+            // Now we bring on the big guns, brute force the hit vector until we find a solution that directly hits the neighbor block without obstruction
+            for (Vec3d hitVecToTry : hitVecsToTryArray) {
+                Vec3d multiplier = Vec3d.of(side.getVector());
+                multiplier = new Vec3d(
+                        multiplier.x == 0 ? 1 : 0,
+                        multiplier.y == 0 ? 1 : 0,
+                        multiplier.z == 0 ? 1 : 0); // Offset from the Center of the block side face we are placing on by pre calculated values. This samples different points on that face.
+
+                Vec3d blockHit = hitVec.add(hitVecToTry.multiply(multiplier));
+                Vec3d lookDirection = blockHit.subtract(playerEyePos).normalize();
+                Direction relativeDirection = Direction.getFacing(lookDirection.x, lookDirection.y, lookDirection.z);
+
+                if (playerEyePos.distanceTo(blockHit) > LitematicaMixinMod.PRINTING_RANGE.getDoubleValue()) // Check if the hit vector is in range
+                    continue;
+
+                if (PrinterConfig.RAYCAST.getBooleanValue() && mc.world != null && mc.player != null) {
+                    Vec3d lookVec = blockHit.subtract(playerEyePos).normalize(); // Look vector from the player's eye to the block hit vector
+                    Vec3d raycastEnd = playerEyePos.add(lookVec.multiply(5)); // 5 block max distance
+                    RaycastContext raycastContext = new RaycastContext(playerEyePos, raycastEnd, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, player);
+                    BlockHitResult result = mc.world.raycast(raycastContext);
+                    if (result.getType() != HitResult.Type.BLOCK) { // If we didn't hit a block, skip
+                        continue;
+                    }
+
+                    if (result.getBlockPos().equals(neighborPos)) {
+                        if (PrinterConfig.RAYCAST_STRICT_BLOCK_HIT.getBooleanValue()) { // Check if the right side was hit
+                            Direction hitSide = result.getSide();
+                            if (hitSide.getOpposite() != side) {
+                                continue;
+                            }
+                        }
+                        if (result.getPos().distanceTo(playerEyePos) > LitematicaMixinMod.PRINTING_RANGE.getDoubleValue()) { // Check if the hit result is in range
+                            continue;
+                        }
+                        BlockHitResult hitResult = new BlockHitResult(blockHit, side.getOpposite(), neighborPos, false);
+                        PrinterPlacementContext rayTraceContext = new PrinterPlacementContext(player, hitResult, requiredItem, slot, relativeDirection, requiresShift);
+                        rayTraceContext.canStealth = true;
+                        rayTraceContext.isRaytrace = true;
+                        BlockState resultState = getRequiredItemAsBlock(player)
+                                .orElse(targetState.getBlock())
+                                .getPlacementState(rayTraceContext);
+
+                        if (resultState != null && (statesEqual(resultState, targetState) || correctChestPlacement(targetState, resultState))) {
+                            contextCache = rayTraceContext;
+                            return rayTraceContext;
+                        }
+                    }
+                    continue;
+                }
+
+                BlockHitResult hitResult = new BlockHitResult(blockHit, side.getOpposite(), neighborPos, false);
+                PrinterPlacementContext context = new PrinterPlacementContext(player, hitResult, requiredItem, slot, relativeDirection, requiresShift);
+                context.canStealth = true;
+                BlockState result = getRequiredItemAsBlock(player)
+                        .orElse(targetState.getBlock())
+                        .getPlacementState(context); // FIXME torch shift clicks another torch and getPlacementState is the clicked block, which is true
+
+                if (result != null && (statesEqual(result, targetState) || correctChestPlacement(targetState, result))) {
+                    contextCache = context;
+                    return context;
+                }
+            }
+        }
         // }
+
+        if(PrinterConfig.PRINTER_AIRPLACE.getBooleanValue()){
+
+            Vec3d hitVec = Vec3d.ofCenter(state.blockPos);
+            BlockHitResult hitResult = new BlockHitResult(hitVec, Direction.UP, state.blockPos, false);
+            PrinterPlacementContext context = new PrinterPlacementContext(player, hitResult, requiredItem, slot, Direction.UP, false);
+            context.canStealth = true;
+            context.isRaytrace = false;
+            BlockState result = getRequiredItemAsBlock(player)
+                    .orElse(targetState.getBlock())
+                    .getPlacementState(context);
+
+            if (result != null && (statesEqual(result, targetState))) {
+                contextCache = context;
+                return context;
+            }
+        }
 
         return null;
     }
+
 
     private boolean correctChestPlacement(BlockState targetState, BlockState result) {
         if (targetState.contains(ChestBlock.CHEST_TYPE) && result.contains(ChestBlock.CHEST_TYPE) && result.get(ChestBlock.FACING) == targetState.get(ChestBlock.FACING)) {

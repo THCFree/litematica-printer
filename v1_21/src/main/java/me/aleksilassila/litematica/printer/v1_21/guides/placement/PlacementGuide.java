@@ -3,6 +3,7 @@ package me.aleksilassila.litematica.printer.v1_21.guides.placement;
 import me.aleksilassila.litematica.printer.v1_21.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.v1_21.Printer;
 import me.aleksilassila.litematica.printer.v1_21.actions.*;
+import me.aleksilassila.litematica.printer.v1_21.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_21.implementation.PrinterPlacementContext;
 import me.aleksilassila.litematica.printer.v1_21.SchematicBlockState;
 import me.aleksilassila.litematica.printer.v1_21.guides.Guide;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.World;
@@ -64,7 +66,9 @@ abstract public class PlacementGuide extends Guide {
     @Override
     public boolean canExecute(ClientPlayerEntity player) {
         if (!super.canExecute(player)) return false;
-
+        if(PrinterConfig.PRINTER_AIRPLACE.getBooleanValue() && isInAir(state.blockPos)) {
+            return true;
+        }
         List<ItemStack> requiredItems = getRequiredItems();
         if (requiredItems.isEmpty() || requiredItems.stream().allMatch(i -> i.isOf(Items.AIR)))
             return false;
@@ -86,6 +90,17 @@ abstract public class PlacementGuide extends Guide {
         } else {
             return false;
         }
+
+    }
+
+    public boolean isInAir(BlockPos pos){
+        if(mc.world == null ) return false;
+        for(Direction dir : Direction.values()){
+            if(!mc.world.getBlockState(pos.offset(dir)).isAir()){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

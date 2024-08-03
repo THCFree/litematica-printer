@@ -3,6 +3,7 @@ package me.aleksilassila.litematica.printer.v1_20_4.guides.placement;
 import me.aleksilassila.litematica.printer.v1_20_4.LitematicaMixinMod;
 import me.aleksilassila.litematica.printer.v1_20_4.Printer;
 import me.aleksilassila.litematica.printer.v1_20_4.actions.*;
+import me.aleksilassila.litematica.printer.v1_20_4.config.PrinterConfig;
 import me.aleksilassila.litematica.printer.v1_20_4.implementation.PrinterPlacementContext;
 import me.aleksilassila.litematica.printer.v1_20_4.SchematicBlockState;
 import me.aleksilassila.litematica.printer.v1_20_4.guides.Guide;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.World;
@@ -26,6 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Guide that clicks its neighbors to create a placement in target position.
+ */
 /**
  * Guide that clicks its neighbors to create a placement in target position.
  */
@@ -64,7 +69,9 @@ abstract public class PlacementGuide extends Guide {
     @Override
     public boolean canExecute(ClientPlayerEntity player) {
         if (!super.canExecute(player)) return false;
-
+        if(PrinterConfig.PRINTER_AIRPLACE.getBooleanValue() && isInAir(state.blockPos)) {
+            return true;
+        }
         List<ItemStack> requiredItems = getRequiredItems();
         if (requiredItems.isEmpty() || requiredItems.stream().allMatch(i -> i.isOf(Items.AIR)))
             return false;
@@ -86,6 +93,17 @@ abstract public class PlacementGuide extends Guide {
         } else {
             return false;
         }
+
+    }
+
+    public boolean isInAir(BlockPos pos){
+        if(mc.world == null ) return false;
+        for(Direction dir : Direction.values()){
+            if(!mc.world.getBlockState(pos.offset(dir)).isAir()){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
